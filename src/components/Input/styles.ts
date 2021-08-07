@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-// import Tooltip from '../Tooltip';
+import Tooltip from '../Tooltip';
 
 interface ContainerProps {
     isFocused: boolean;
@@ -9,13 +9,13 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-    background: #232129;
+    background: var(--input-color);
     border-radius: 10px;
-    border: 2px solid #232129;
+    border: 2px solid var(--input-color);
     padding: 16px;
     width: 100%;
-    border: 2px solid #232129;
-    color: #666360;
+    border: 2px solid var(--input-color);
+    color: var(--details-color);
     display: flex;
     align-items: center;
     & + div {
@@ -25,19 +25,19 @@ export const Container = styled.div<ContainerProps>`
         border-color: #c53030;
     `}
     ${props => props.isFocused && css`
-        color: #ff9000;
-        border-color: #ff9000; 
+        color: var(--contrast-color);
+        border-color: var(--contrast-color);
     `}
     ${props => props.isFilled && css`
-        color: #ff9000;
+        color: var(--contrast-color);
     `}
     input {
         flex: 1;
         background: transparent;
         border: 0;
-        color: #F4ede8;
+        color: var(--text-color);
         &::placeholder {
-            color: #666360;
+            color: var(--details-color);
         }
     }
     svg {
@@ -45,18 +45,18 @@ export const Container = styled.div<ContainerProps>`
     }
 `;
 
-// export const Error = styled(Tooltip)`
-//     height: 20px;
-//     margin-left: 16px;
+export const Error = styled(Tooltip)`
+    height: 20px;
+    margin-left: 16px;
     
-//     svg {
-//         margin: 0;
-//     }
-//     span {
-//         background: #c53030;
-//         color: #FFF;
-//         &::before {
-//             border-color: #c53030 transparent;
-//         }
-//     }
-// `;
+    svg {
+        margin: 0;
+    }
+    span {
+        background: #c53030;
+        color: #FFF;
+        &::before {
+            border-color: #c53030 transparent;
+        }
+    }
+`;

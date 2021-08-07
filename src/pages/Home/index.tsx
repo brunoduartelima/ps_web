@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import { useHistory } from 'react-router-dom';
+import { Form } from '@unform/web';
 import axios from 'axios';
 import api from '../../services/api';
 
@@ -10,7 +11,6 @@ import {
     Main, 
     Description,
     Register,
-    Form,
     FormContent 
 } from './styles';
 
@@ -111,6 +111,10 @@ const Home: React.FC = () => {
     //     }
     // }
 
+    function handle(){
+
+    }
+
     return (
         <Container>
             <Header>
@@ -135,12 +139,12 @@ const Home: React.FC = () => {
                         <h1>Abra uma conta</h1>
                         <p>Faça seu cadastro.<br/>Entre na plataforma e gerencie sua empresa de uma maneira facíl e moderna.</p>
                     </section>
-                    <Form>
+                    <Form onSubmit={() => handle}>
                         <FormContent>
                             <legend>Dados Cadatrais</legend>
                             
                             <label htmlFor="name">Nome completo</label>
-                            <Input name="name" icon={FiUser} placeholder="Ex: João Batista da Silva" />
+                            <Input name="password" type="password" icon={FiUser} placeholder="Ex: João Batista da Silva" />
 
                             <label htmlFor="cpf">CPF</label>
                             <Input name="cpf" icon={FiUser} placeholder="Ex: 123.123.123-00" />

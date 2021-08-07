@@ -4,12 +4,13 @@ export default createGlobalStyle`
     :root{
         --contrast-color: #4B75F2;
         --contrast-details-color: #3959B8;
-        --text-color: #0B0B0D;
-        --secondary-text-color: #BFBFBF;
-        --button-text-color: #FFF;
         --header-color: #262626;
         --details-color: #454C59;
         --body-color: #F2F2F2;
+        --input-color: #E3E3E3;
+        --text-color: #0B0B0D;
+        --secondary-text-color: #BFBFBF;
+        --button-text-color: #FFF;
     }
     
     * {
