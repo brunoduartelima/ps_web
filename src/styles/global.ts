@@ -13,6 +13,10 @@ export default createGlobalStyle`
         --button-text-color: #FFF;
     }
     
+    html {
+        font-size: 50%;
+    }
+    
     * {
         margin: 0;
         padding: 0;
@@ -26,7 +30,7 @@ export default createGlobalStyle`
     }
     body, input, button {
         font-family: 'Roboto Slab', serif;
-        font-size: 1rem;
+        font-size: 2rem;
     }
     h1, h2, h3, h4, h5, h6, strong {
         font-weight: 500;

@@ -18,6 +18,8 @@ export const Container = styled.div<ContainerProps>`
     color: var(--details-color);
     display: flex;
     align-items: center;
+    margin-bottom: 8px;
+
     & + div {
         margin-top: 8px;
     }
@@ -55,6 +57,7 @@ export const Error = styled(Tooltip)`
     span {
         background: #c53030;
         color: #FFF;
+        text-align: center;
         &::before {
             border-color: #c53030 transparent;
         }
