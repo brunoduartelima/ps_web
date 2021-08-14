@@ -18,7 +18,7 @@ export const Container = styled.div<ContainerProps>`
     color: var(--details-color);
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 
     & + div {
         margin-top: 8px;

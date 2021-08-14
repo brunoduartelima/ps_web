@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import { FiCreditCard, FiLock, FiMail, FiPhone, FiUser } from 'react-icons/fi';
@@ -37,6 +37,10 @@ interface RegisterFormData {
 
 
 const Home: React.FC = () => {
+    const [document, setDocument] = useState<string>('');
+    const [phone, setPhone] = useState<string>('');
+
+
     const formRef = useRef<FormHandles>(null);
 
     const handleSubmit = useCallback(async (data: RegisterFormData) => {
@@ -68,6 +72,25 @@ const Home: React.FC = () => {
 
         }
     }, []);
+
+    function mask_cpf(value: string){
+        value = value.replace(/\D/g, '')
+        value = value.replace(/(\d{3})(\d)/, '$1.$2')
+        value = value.replace(/(\d{3})(\d)/, '$1.$2')
+        value = value.replace(/(\d{3})(\d{1,2})/, '$1-$2')
+        value = value.replace(/(-\d{2})\d+?$/, '$1')
+
+        return value;
+    }
+
+    function mask_phone(value: string){
+        value = value.replace(/\D/g, '')
+        value = value.replace(/(\d{2})(\d)/, '($1) $2')
+        value = value.replace(/(\d{4,5})(\d{4})/, '$1-$2')
+        value = value.replace(/(-\d{4})\d+?$/, '$1')
+
+        return value;
+    }
 
     return (
         <Container>
@@ -102,10 +125,10 @@ const Home: React.FC = () => {
                                 <Input name="name" icon={FiUser} placeholder="João da Silva" />
 
                                 <label htmlFor="cpf">CPF</label>
-                                <Input name="cpf" icon={FiCreditCard} placeholder="123.456.789-00" />
+                                <Input value={document} onChange={e => setDocument(mask_cpf(e.target.value))} name="cpf" icon={FiCreditCard} placeholder="123.456.789-00" />
 
                                 <label htmlFor="phone">Telefone</label>
-                                <Input name="phone" type="tel" icon={FiPhone} placeholder="(11) 91234 5679" />
+                                <Input value={phone} onChange={e => setPhone(mask_phone(e.target.value))} name="phone" type="tel" icon={FiPhone} placeholder="(11) 91234 5679" />
                             </FormContent>
                             <UserFormContent>
                                 <legend>Dados Login</legend>

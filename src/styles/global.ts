@@ -29,7 +29,7 @@ export default createGlobalStyle`
         -webkit-font-smoothing: antialiased;
     }
     body, input, button {
-        font-family: 'Roboto Slab', serif;
+        font-family: 'Roboto', sans-serif;
         font-size: 2rem;
     }
     h1, h2, h3, h4, h5, h6, strong {
