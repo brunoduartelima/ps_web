@@ -10,8 +10,7 @@ import {
     Container, 
     Modal, 
     SimpleContent, 
-    FormContent, 
-    SelectField, 
+    FormContent,  
     StyledContent 
 } from './styles';
 
@@ -19,6 +18,7 @@ import api from '../../services/api';
 import imgStore from '../../assets/store.svg';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import Select from '../../components/Select';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 interface Uf {
@@ -32,16 +32,16 @@ interface City {
 interface CompanyFormData {
     name: string;
     type: string;
-    selectedUf: string;
-    selectedCity: string;
+    uf: string;
+    city: string;
 }
 
 const CompanyRegister: React.FC = () => {
     const [disappear, setDisappear] = useState(false);
     const [ufs, setUfs] = useState<string[]>([]);
     const [cities, setCities] = useState<string[]>([]);
-    const [selectedUf, setSelectedUf] = useState('0');
-    const [selectedCity, setSelectedCity] = useState('0');
+    const [selectedUf, setSelectedUf] = useState<string>();
+    const [selectedCity, setSelectedCity] = useState<string>();
 
     const formRef = useRef<FormHandles>(null);
 
@@ -93,8 +93,8 @@ const CompanyRegister: React.FC = () => {
             const schema = Yup.object().shape({
                 name: Yup.string().required('Nome obrigatório'),
                 type: Yup.string().required('Tipo obrigatório'),
-                uf: Yup.string().max(2, 'Escolha um estado'),
-                selectedCity: Yup.string().required('Escolha uma cidade'),
+                uf: Yup.string().min(2, 'Escolha um estado'),
+                city: Yup.string().min(2, 'Escolha uma cidade'),
             });
 
             await schema.validate(data, {
@@ -133,35 +133,28 @@ const CompanyRegister: React.FC = () => {
                     <label htmlFor="type">Tipo de produto/serviço</label>
                     <Input name="type" icon={FiPackage} placeholder="Roupas e calçados" />
 
-                    <SelectField>
-                        <label htmlFor="uf">Estado</label>
-                        <select 
-                            name="uf" 
-                            id="uf" 
-                            value={selectedUf} 
-                            onChange={handleSelectUf}
-                        >
-                            <option value="0">Selecione uma UF</option>
-                            {ufs.map(uf => (
-                                <option key={uf} value={uf}>{uf}</option>
-                            ))}
-                        </select>
-                    </SelectField>
-                    <SelectField className="field">
-                        <label htmlFor="city">Cidade</label>
-                        <select 
-                            name="city" 
-                            id="city" 
-                            value={selectedCity} 
-                            onChange={handleSelectCity} 
-                        >
-                            <option value="0">Selecione uma cidade</option>
-                            {cities.map(city => (
-                                <option key={city} value={city}>{city}</option>
-                            ))}
-                        </select>
-                    </SelectField>
-
+                    <label htmlFor="uf">Estado</label>
+                    <Select 
+                        name="uf" 
+                        value={selectedUf} 
+                        onChange={handleSelectUf}
+                    >
+                        <option value="0">Selecione uma UF</option>
+                        {ufs.map(uf => (
+                            <option key={uf} value={uf}>{uf}</option>
+                        ))}
+                    </Select>
+                    <label htmlFor="city">Cidade</label>
+                    <Select 
+                        name="city" 
+                        value={selectedCity} 
+                        onChange={handleSelectCity} 
+                    >
+                        <option value="0">Selecione uma cidade</option>
+                        {cities.map(city => (
+                            <option key={city} value={city}>{city}</option>
+                        ))}
+                    </Select>
                     <Button type="submit" >Cadastrar</Button>
                 </FormContent>
             </Form>

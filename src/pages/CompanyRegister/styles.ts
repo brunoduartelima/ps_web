@@ -41,7 +41,7 @@ const gradient = keyframes`
     }
 `;
 
-export const Container = styled.body`
+export const Container = styled.div`
     display: flex;
     width: 100%;
     height: 100vh;
@@ -65,6 +65,7 @@ export const Container = styled.body`
         background: #fff;
         border-radius: 1rem;
         box-shadow: 20px 20px 20px 0 rgb(0 0 0 / 25%);
+
     }
 `;
 
@@ -131,27 +132,7 @@ export const FormContent = styled.fieldset`
         margin-top: 3rem;
     }
 `;
-export const SelectField = styled.div`
-    display: flex;
-    flex-direction: column;
 
-    select {
-        border-radius: 1rem;
-        height: 48px;
-        font-family: 'Roboto', sans-serif;
-        font-weight: 400;
-        font-size: 2rem;
-        border: none;
-        padding-left: 2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    option {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 400;
-        font-size: 2rem;
-    }
-`;
 export const StyledContent = styled.div`
     display: flex;
     align-items: center;
