@@ -20,6 +20,7 @@ import {
 } from './styles';
 
 import getValidationErrors from '../../utils/getValidationErrors';
+import { mask_cpf, mask_phone } from '../../utils/inputMasks';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -40,7 +41,6 @@ const Home: React.FC = () => {
     const [document, setDocument] = useState<string>('');
     const [phone, setPhone] = useState<string>('');
 
-
     const formRef = useRef<FormHandles>(null);
 
     const handleSubmit = useCallback(async (data: RegisterFormData) => {
@@ -59,7 +59,7 @@ const Home: React.FC = () => {
                 abortEarly: false,
             });
 
-            await api.post('/users', data);
+            const user = await api.post('/users', data);
 
         } catch (error) {
             if (error instanceof Yup.ValidationError) {
@@ -72,25 +72,6 @@ const Home: React.FC = () => {
 
         }
     }, []);
-
-    function mask_cpf(value: string){
-        value = value.replace(/\D/g, '')
-        value = value.replace(/(\d{3})(\d)/, '$1.$2')
-        value = value.replace(/(\d{3})(\d)/, '$1.$2')
-        value = value.replace(/(\d{3})(\d{1,2})/, '$1-$2')
-        value = value.replace(/(-\d{2})\d+?$/, '$1')
-
-        return value;
-    }
-
-    function mask_phone(value: string){
-        value = value.replace(/\D/g, '')
-        value = value.replace(/(\d{2})(\d)/, '($1) $2')
-        value = value.replace(/(\d{4,5})(\d{4})/, '$1-$2')
-        value = value.replace(/(-\d{4})\d+?$/, '$1')
-
-        return value;
-    }
 
     return (
         <Container>

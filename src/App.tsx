@@ -6,7 +6,7 @@ import CompanyRegister from './pages/CompanyRegister';
 
 const App: React.FC = () => (
   <>
-    <CompanyRegister />
+    <Home />
     <GlobalStyle />
   </>
 );

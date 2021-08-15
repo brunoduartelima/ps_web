@@ -1,5 +1,16 @@
 import styled, { keyframes } from 'styled-components';
 
+const appearFromLeft = keyframes`
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+`;
+
 export const Container = styled.div`
     height: 100vh;
 `;
@@ -73,17 +84,6 @@ export const Description = styled.div`
 
     h3 strong {
         font-size: 4rem;
-    }
-`;
-
-const appearFromLeft = keyframes`
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
     }
 `;
 
