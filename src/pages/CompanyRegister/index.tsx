@@ -2,19 +2,20 @@ import React, { ChangeEvent, useEffect, useState, useRef, useCallback } from 're
 import { FiPackage } from 'react-icons/fi';
 import { RiStore3Line } from 'react-icons/ri';
 import { FormHandles } from '@unform/core';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import axios from 'axios';
 
+import api from '../../services/api';
+
 import { 
-    Container, 
-    Modal, 
+    Container,
     SimpleContent, 
     FormContent,  
     StyledContent 
 } from './styles';
 
-import api from '../../services/api';
 import imgStore from '../../assets/store.svg';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -31,25 +32,21 @@ interface City {
 
 interface CompanyFormData {
     name: string;
-    type: string;
+    company_type: string;
     uf: string;
     city: string;
 }
 
 const CompanyRegister: React.FC = () => {
-    const [disappear, setDisappear] = useState(false);
+    const formRef = useRef<FormHandles>(null);
+    
+    const location = useLocation();
+    const history = useHistory();
+
     const [ufs, setUfs] = useState<string[]>([]);
     const [cities, setCities] = useState<string[]>([]);
     const [selectedUf, setSelectedUf] = useState<string>();
     const [selectedCity, setSelectedCity] = useState<string>();
-
-    const formRef = useRef<FormHandles>(null);
-
-    useEffect(() => {
-        setTimeout(() => {
-            setDisappear(true);
-        }, 3000);
-    }, []);
 
     useEffect(() => {
         axios.get<Uf[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
@@ -73,7 +70,7 @@ const CompanyRegister: React.FC = () => {
         
     }, [selectedUf]);
 
-    function handleSelectUf (event: ChangeEvent<HTMLSelectElement>) { 
+    function handleSelectUf(event: ChangeEvent<HTMLSelectElement>) { 
         const uf = event.target.value;
 
         setSelectedUf(uf);
@@ -92,7 +89,7 @@ const CompanyRegister: React.FC = () => {
 
             const schema = Yup.object().shape({
                 name: Yup.string().required('Nome obrigatório'),
-                type: Yup.string().required('Tipo obrigatório'),
+                company_type: Yup.string().required('Tipo obrigatório'),
                 uf: Yup.string().min(2, 'Escolha um estado'),
                 city: Yup.string().min(2, 'Escolha uma cidade'),
             });
@@ -101,7 +98,11 @@ const CompanyRegister: React.FC = () => {
                 abortEarly: false,
             });
 
-            await api.post('/companies', data);
+            const user_id = location.pathname.replace('/company-register/', '');
+
+            await api.post(`/companies/${user_id}`, data);
+
+            history.push('/sign-in');
 
         } catch (error) {
             if (error instanceof Yup.ValidationError) {
@@ -112,26 +113,22 @@ const CompanyRegister: React.FC = () => {
                 return;
             }
         }
-    }, []);
+    }, [location, history]);
 
     return (
         <Container>
-            <Modal disappear={disappear}>
-                <h1>Olá</h1>
-                <h2>Seja bem-vindo!</h2>
-            </Modal>
             <SimpleContent>
                 <img src={imgStore} alt="Loja" />
             </SimpleContent>
             <Form ref={formRef} onSubmit={handleSubmit}>
                 <FormContent>
-                    <legend>Cadastre | Dados da Empresa</legend>
+                    <legend>Cadastro | Dados da Empresa</legend>
                     
                     <label htmlFor="name">Nome da sua empresa</label>
                     <Input name="name" icon={RiStore3Line} placeholder="Loja do João" />
 
-                    <label htmlFor="type">Tipo de produto/serviço</label>
-                    <Input name="type" icon={FiPackage} placeholder="Roupas e calçados" />
+                    <label htmlFor="company_type">Tipo de produto/serviço</label>
+                    <Input name="company_type" icon={FiPackage} placeholder="Roupas e calçados" />
 
                     <label htmlFor="uf">Estado</label>
                     <Select 

@@ -34,7 +34,7 @@ export const Container = styled.div`
         justify-content: center;
 
         width: 60rem;
-        height: 600px;
+        height: 400px;
         background: #fff;
         border-radius: 1rem;
         box-shadow: 20px 20px 20px 0 rgb(0 0 0 / 25%);
@@ -48,25 +48,65 @@ export const SimpleContent = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-
-    img {
-        margin-right: 28rem;
-    }
 `;
+
 export const FormContent = styled.fieldset`
     width: 400px;
-    height: 80%;
+    height: 90%;
     border: none;
+
+    Button {
+        margin-top: 2rem;
+    }
+
+    a {
+        text-decoration: none;
+        color: var(--contrast-color);
+        font-weight: 500;
+        transition: all .4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 3rem;
+        
+        svg {
+            margin-right: 16px;
+        }
+    }
+
+    a:hover {
+        color: var(--contrast-details-color);
+    }
+`;
+
+export const LegendContent = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+
+    img {
+        width: 130px;
+        height: 70px;
+    }
 
     legend {
         font-size: 3rem;
         font-weight: 500;
         color: var(--contrast-color);
-        margin-bottom: 32px;
+        margin-bottom: 20px;
+    }
+`;
+
+export const CheckUserContent = styled.div`
+    padding-top: 0.5rem;
+    
+    input {
+        margin-right: 0.5rem;
     }
 
-    Button {
-        margin-top: 3rem;
+    label + input {
+        margin-left: 6rem;
     }
 `;
 
@@ -79,8 +119,8 @@ export const StyledContent = styled.div`
     height: 100vh;
     background-image: linear-gradient(
         44deg, 
-        #261A73,
-        #261A73, 
+        #ED7F45,
+        #ED7F45, 
         var(--contrast-color),
         var(--contrast-color)
     );

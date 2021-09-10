@@ -12,12 +12,12 @@ const appearFromLeft = keyframes`
 `;
 
 export const Container = styled.div`
-    height: 100vh;
+    display: grid;
+    grid-template-rows: 10% 85% 5%;
 `;
 
 export const Header = styled.header`
     width: 100%;
-    height: 100px;
     background: var(--header-color);
     display: flex;
     justify-content: center;
@@ -32,24 +32,38 @@ export const HeaderContent = styled.div`
 
     > img {
         width: 200px;
-        height: 80px;
+        height: 75%;
     }
 
-    Button {
+    a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 20rem;
+        height: 7rem;
+        border-radius: 10px;
+        font-weight: 500;
+        background-color: var(--contrast-color);
         margin-right: 15rem;
+        text-decoration: none;
+        color: var(--button-text-color);
+        transition: all .4s ease;
+    
+        &:hover {
+            background: var(--contrast-details-color);
+        }
     }
 `;
 
 export const Main = styled.main`
     display: flex;
     padding: 4rem 8rem 0px;
-
 `;
 
 export const Description = styled.div`
     display: flex;
     width: 50%;
+    height: 100%;
     flex-direction: column;
 
     align-items: center;
@@ -138,7 +152,6 @@ export const UserFormContent = styled.fieldset`
 
 export const Footer = styled.footer`
     width: 100%;
-    height: 60px;
     margin-top: 20px;
     background: var(--header-color);
     display: flex;
@@ -153,5 +166,4 @@ export const Footer = styled.footer`
             color: var(--contrast-color);
         }
     }
-
 `;

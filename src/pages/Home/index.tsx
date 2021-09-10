@@ -1,4 +1,5 @@
 import React, { useRef, useCallback, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import { FiCreditCard, FiLock, FiMail, FiPhone, FiUser } from 'react-icons/fi';
@@ -20,7 +21,7 @@ import {
 } from './styles';
 
 import getValidationErrors from '../../utils/getValidationErrors';
-import { mask_cpf, mask_phone } from '../../utils/inputMasks';
+import { maskCpf, maskPhone } from '../../utils/inputMasks';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -38,10 +39,12 @@ interface RegisterFormData {
 
 
 const Home: React.FC = () => {
+    const formRef = useRef<FormHandles>(null);
+
+    const history = useHistory();
+
     const [document, setDocument] = useState<string>('');
     const [phone, setPhone] = useState<string>('');
-
-    const formRef = useRef<FormHandles>(null);
 
     const handleSubmit = useCallback(async (data: RegisterFormData) => {
         try {
@@ -60,7 +63,8 @@ const Home: React.FC = () => {
             });
 
             const user = await api.post('/users', data);
-
+            
+            history.push(`/company-register/${user.data.id}`);
         } catch (error) {
             if (error instanceof Yup.ValidationError) {
                 const errors = getValidationErrors(error);
@@ -71,14 +75,14 @@ const Home: React.FC = () => {
             }
 
         }
-    }, []);
+    }, [history]);
 
     return (
         <Container>
             <Header>
                 <HeaderContent>
                     <img src={logoImg} alt="Personal Manager" />
-                    <Button type="button">Entrar</Button>
+                    <Link to="/sign-in">Entrar</Link>
                 </HeaderContent>
             </Header>
             <Main>
@@ -106,10 +110,10 @@ const Home: React.FC = () => {
                                 <Input name="name" icon={FiUser} placeholder="João da Silva" />
 
                                 <label htmlFor="cpf">CPF</label>
-                                <Input value={document} onChange={e => setDocument(mask_cpf(e.target.value))} name="cpf" icon={FiCreditCard} placeholder="123.456.789-00" />
+                                <Input value={document} onChange={e => setDocument(maskCpf(e.target.value))} name="cpf" icon={FiCreditCard} placeholder="123.456.789-00" />
 
                                 <label htmlFor="phone">Telefone</label>
-                                <Input value={phone} onChange={e => setPhone(mask_phone(e.target.value))} name="phone" type="tel" icon={FiPhone} placeholder="(11) 91234 5679" />
+                                <Input value={phone} onChange={e => setPhone(maskPhone(e.target.value))} name="phone" type="tel" icon={FiPhone} placeholder="(11) 91234 5679" />
                             </FormContent>
                             <UserFormContent>
                                 <legend>Dados Login</legend>
