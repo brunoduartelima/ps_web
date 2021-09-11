@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 
 import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
 
 import { 
     Container,
@@ -42,6 +43,8 @@ const CompanyRegister: React.FC = () => {
     
     const location = useLocation();
     const history = useHistory();
+
+    const { addToast } = useToast();
 
     const [ufs, setUfs] = useState<string[]>([]);
     const [cities, setCities] = useState<string[]>([]);
@@ -112,8 +115,15 @@ const CompanyRegister: React.FC = () => {
 
                 return;
             }
+            
+            addToast({
+                type: 'error',
+                title: 'Erro ao cadastrar empresa',
+                description: 'Ocorreu um erro ao tentar cadastrar empresa, revise as informações e tente novamente.',
+            });
+            
         }
-    }, [location, history]);
+    }, [addToast, location, history]);
 
     return (
         <Container>

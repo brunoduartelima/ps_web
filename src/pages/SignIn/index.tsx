@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { FiLock, FiMail } from 'react-icons/fi';
 
 import { useAuth } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import logo from '../../assets/logo.png';
@@ -40,6 +41,7 @@ const SignIn: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
 
     const { signIn } = useAuth();
+    const { addToast } = useToast();
 
     const history = useHistory();
 
@@ -79,13 +81,20 @@ const SignIn: React.FC = () => {
 
             if(statusError.response.status === 303) {
                 const user_id = statusError.response.data.message.replace('Cannot enter application due to lack of basic data user:','');
-                
+
+
                 history.push(`company-register/${user_id}`);
 
                 return;
             }
+
+            addToast({
+                type: 'error',
+                title: 'Falha na autenticação',
+                description: 'Ocorreu uma falha ao fazer login, cheque as credenciais.',
+            });
         }
-    }, [signIn, checkUserMain, history]);
+    }, [signIn, addToast, checkUserMain, history]);
 
     function handleCheckUser(checkUser: boolean) {
         if(!checkUser){

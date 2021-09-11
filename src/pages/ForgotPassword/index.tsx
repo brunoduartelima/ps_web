@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { FiLogIn, FiMail } from 'react-icons/fi';
 
 import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import logo from '../../assets/logo.png';
@@ -27,6 +28,8 @@ interface ForgotPasswordFormData {
 
 const ForgotPassword: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
+
+    const { addToast } = useToast();
 
     const [loading, setLoading] = useState(false);
     const [checkUserMain, setCheckUserMain] = useState(true);
@@ -50,8 +53,13 @@ const ForgotPassword: React.FC = () => {
                 type_user: checkUserMain ? 'master' : 'employee'
             });
 
+            addToast({
+                type: 'success',
+                title: 'E-mail de recuperação enviado',
+                description: 'Enviamos um e-mail para confirmar a recuperação de senha, cheque sua caixa de entrada'
+            });
+
         } catch (error) {
-            setLoading(false);
             if (error instanceof Yup.ValidationError) {
                 const errors = getValidationErrors(error);
 
@@ -59,9 +67,17 @@ const ForgotPassword: React.FC = () => {
 
                 return;
             }
+
+            addToast({
+                type: 'error',
+                title: 'Erro na recuperação de senha',
+                description: 'Ocorreu um erro ao tentar realizar a recuperação de senha, tente novamente.',
+            });
             
+        } finally {
+            setLoading(false);
         }
-    }, [checkUserMain]);
+    }, [addToast, checkUserMain]);
 
     function handleCheckUser(checkUser: boolean) {
         if(!checkUser){

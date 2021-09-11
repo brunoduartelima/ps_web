@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { FiLock } from 'react-icons/fi';
 
 import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import logo from '../../assets/logo.png';
@@ -31,16 +32,14 @@ const ResetPassword: React.FC = () => {
     
     const location = useLocation();
     const history = useHistory();
+    const { addToast } = useToast();
     
-    const [loading, setLoading] = useState(false);
     const [checkUserMain, setCheckUserMain] = useState(true);
     const [checkUserEmployee, setCheckUserEmployee] = useState(false);
 
 
     const handleSubmit = useCallback(async (data: ResetPasswordFormData) => {
         try {
-            setLoading(true);
-
             formRef.current?.setErrors({});
 
             const schema = Yup.object().shape({   
@@ -67,7 +66,6 @@ const ResetPassword: React.FC = () => {
 
             history.push('/sign-in');
         } catch (error) {
-            setLoading(false);
             if (error instanceof Yup.ValidationError) {
                 const errors = getValidationErrors(error);
 
@@ -75,9 +73,15 @@ const ResetPassword: React.FC = () => {
                 
                 return;
             }
+
+            addToast({
+                type: 'error',
+                title: 'Erro ao resetar senha',
+                description: 'Ocorreu um erro ao resetar sua senha, tente novamente.',
+            });
             
         }
-    }, [history, location.search, checkUserMain]);
+    }, [addToast, history, location.search, checkUserMain]);
 
     function handleCheckUser(checkUser: boolean) {
         if(!checkUser){
@@ -112,7 +116,7 @@ const ResetPassword: React.FC = () => {
                         <input type="checkbox" checked={checkUserEmployee} onChange={() => handleCheckUser(checkUserEmployee)}/>
                         <label htmlFor="checkUser">Colaborador</label>
                     </CheckUserContent>
-                    <Button loading={loading} type="submit">Alterar senha</Button>
+                    <Button type="submit">Alterar senha</Button>
                 </FormContent>
             </Form>
             <StyledContent>

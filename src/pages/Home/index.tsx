@@ -6,6 +6,7 @@ import { FiCreditCard, FiLock, FiMail, FiPhone, FiUser } from 'react-icons/fi';
 import * as Yup from 'yup';
 
 import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
 
 import { 
     Container, 
@@ -42,6 +43,7 @@ const Home: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
 
     const history = useHistory();
+    const { addToast } = useToast();
 
     const [document, setDocument] = useState<string>('');
     const [phone, setPhone] = useState<string>('');
@@ -74,8 +76,14 @@ const Home: React.FC = () => {
                 return;
             }
 
+            addToast({
+                type: 'error',
+                title: 'Erro ao se cadastrar',
+                description: 'Ocorreu um erro ao tentar se cadastrar, revise as informações e tente novamente.',
+            });
+
         }
-    }, [history]);
+    }, [addToast,history]);
 
     return (
         <Container>
