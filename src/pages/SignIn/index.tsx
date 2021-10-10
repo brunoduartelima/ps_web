@@ -82,7 +82,6 @@ const SignIn: React.FC = () => {
             if(statusError.response.status === 303) {
                 const user_id = statusError.response.data.message.replace('Cannot enter application due to lack of basic data user:','');
 
-
                 history.push(`company-register/${user_id}`);
 
                 return;

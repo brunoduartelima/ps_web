@@ -7,7 +7,6 @@ const Dashboard: React.FC = () => {
     return (
         <Container>
             <Header />
-            <h1>Teste</h1>
         </Container>
     )
 }

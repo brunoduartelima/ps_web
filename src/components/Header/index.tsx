@@ -32,7 +32,7 @@ const Header: React.FC = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/clients">
+                        <Link to="/customers">
                             <RiContactsLine />
                             Clientes
                         </Link>
@@ -70,7 +70,7 @@ const Header: React.FC = () => {
                 </ul>
             </Navbar>
             <ConfigContent>
-                <Link to="/services">
+                <Link to="/config">
                     <FiSettings />
                     Configurações
                 </Link>
