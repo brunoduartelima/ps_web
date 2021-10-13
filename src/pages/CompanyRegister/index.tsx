@@ -73,18 +73,18 @@ const CompanyRegister: React.FC = () => {
         
     }, [selectedUf]);
 
-    function handleSelectUf(event: ChangeEvent<HTMLSelectElement>) { 
+    const handleSelectUf = useCallback((event: ChangeEvent<HTMLSelectElement>) => { 
         const uf = event.target.value;
 
         setSelectedUf(uf);
         setSelectedCity('0');
-    };
+    }, []);
 
-    function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
+    const handleSelectCity = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
         const city = event.target.value;
 
         setSelectedCity(city);
-    };
+    }, []);
 
     const handleSubmit = useCallback(async (data: CompanyFormData) => {
         try {

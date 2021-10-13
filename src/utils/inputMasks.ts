@@ -16,3 +16,11 @@ export function maskCpf(value: string){
 
     return value;
 }
+
+export function maskCep(value: string){
+    value = value.replace(/\D/g, '')
+    value = value.replace(/(\d{5})(\d)/, '$1-$2')
+    value = value.replace(/(-\d{3})\d+?$/, '$1')
+
+    return value;
+}

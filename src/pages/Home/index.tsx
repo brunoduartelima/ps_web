@@ -45,8 +45,8 @@ const Home: React.FC = () => {
     const history = useHistory();
     const { addToast } = useToast();
 
-    const [document, setDocument] = useState<string>('');
-    const [phone, setPhone] = useState<string>('');
+    const [document, setDocument] = useState('');
+    const [phone, setPhone] = useState('');
 
     const handleSubmit = useCallback(async (data: RegisterFormData) => {
         try {
@@ -54,7 +54,7 @@ const Home: React.FC = () => {
 
             const schema = Yup.object().shape({
                 name: Yup.string().required('Nome obrigatório'),
-                cpf: Yup.string().required('CPF obrigatório'),
+                cpf: Yup.string().required('CPF obrigatório').min(14, 'CPF deve possuir 11 digitos'),
                 phone: Yup.string().required('Telefone obrigatório'),
                 email: Yup.string().required('E-mail obrigatório').email('Digite um e-mail valido'),
                 password: Yup.string().min(6, 'No minimo 6 digitos'),

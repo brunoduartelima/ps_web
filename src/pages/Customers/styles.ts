@@ -45,7 +45,7 @@ export const ServicesContent = styled.div`
 
     span {
         padding-top: 1.5px;
-        margin: 0 24px;
+        margin-right: 3rem;
         font-size: 16px;
         font-weight: 500;
     }
@@ -55,6 +55,7 @@ export const SearchContent = styled.div`
     display: flex;
     width: 340px;
     height: 40px;
+    margin-right: 3rem;
 
     div {
         padding: 8px;

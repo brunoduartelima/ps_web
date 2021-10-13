@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState, KeyboardEvent } from 'react';
+import { useHistory, Link } from 'react-router-dom';
 import { 
     RiSearchLine,
     RiBook2Line, 
@@ -8,13 +9,13 @@ import {
     RiEdit2Line,
     RiDeleteBin7Line,
 } from 'react-icons/ri';
-import { useHistory } from 'react-router';
+
+import api from '../../services/api';
+import { usePagination } from '../../hooks/pagination';
 
 import Header from '../../components/Header';
 import Pagination from '../../components/Pagination';
-import { usePagination } from '../../hooks/pagination';
 
-import api from '../../services/api';
 import {
     Container,
     CustomersContainer,
@@ -49,7 +50,6 @@ const Customers: React.FC = () => {
     const [selectedShowCustomer, setSelectedShowCustomer] = useState<String[]>([]);
 
     const { currentPage, updateCurrentPage } = usePagination();
-
     const history = useHistory();
 
     useEffect(() => {
@@ -141,7 +141,7 @@ const Customers: React.FC = () => {
                         </SearchContent>
                     </form>
                     <div>
-                        <span>Resultados encontrados: { totalElements }</span>
+                        { totalElements > 0  && <span>Resultados encontrados: { totalElements }</span> }
                         <button type="button" onClick={() => handleListAllCustomers()}>
                             <RiFileList3Line size={22} />
                             Listar todos
@@ -155,7 +155,7 @@ const Customers: React.FC = () => {
                 <CustomersContent>
                     { paginationFlag.length ? <h1>Resultados encontrados</h1> : <h1>Cadastrados recentemente</h1> }
                     <ul>
-                        {customers.map(customer => (
+                        { customers.length ? customers.map(customer => (
                             <Customer data-id={customer.id} key={customer.id}>
                                 <CustomerOptions>
                                     <span>{customer.name}</span>
@@ -176,6 +176,7 @@ const Customers: React.FC = () => {
                                     </CustomerOptionsContent>
                                 </CustomerOptions>
                                 <CustomerData isOpen={!selectedShowCustomer.includes(customer.id)} >
+                                    <Link to={`/customer/${customer.id}`}>Detalhes</Link>
                                     <ul>
                                         <li><span>Data de nasc: </span>{customer.date_birth}</li>
                                         <li><span>Telefone: </span>{customer.phone}</li>
@@ -188,7 +189,7 @@ const Customers: React.FC = () => {
                                     </ul>
                                 </CustomerData>
                             </Customer>
-                        ))}
+                        )) : <span>Nenhum resultado encontrado</span> }
                     </ul>
                 </CustomersContent>
                 { totalElements > 0 && <Pagination totalElements={totalElements}  /> }
