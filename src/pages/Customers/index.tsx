@@ -8,6 +8,7 @@ import {
     RiFileList3Line,
     RiEdit2Line,
     RiDeleteBin7Line,
+    RiArrowRightLine
 } from 'react-icons/ri';
 
 import api from '../../services/api';
@@ -26,8 +27,11 @@ import {
     Customer,
     CustomerOptions,
     CustomerOptionsContent,
+    DeleteContainer,
+    DeleteContent,
     CustomerData
 } from './styles';
+import { useToast } from '../../hooks/toast';
 
 interface CustomersData {
     id: string;
@@ -50,8 +54,10 @@ const Customers: React.FC = () => {
     const [paginationFlag, setPaginationFlag] = useState('');
     const [selectedShowCustomer, setSelectedShowCustomer] = useState<String[]>([]);
     const [modalRegistration, setModalRegistration] = useState(false);
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
     const { currentPage, updateCurrentPage } = usePagination();
+    const { addToast } = useToast();
     const history = useHistory();
 
     useEffect(() => {
@@ -126,6 +132,28 @@ const Customers: React.FC = () => {
         }
     }, [history, searchName, updateCurrentPage]);
 
+    const handleDelete = useCallback(async (id: string) => {
+        try {
+            await api.delete(`/customers/${id}`);
+
+            setCustomers(oldCustomers => oldCustomers.filter(customer => customer.id !== id));
+
+            addToast({
+                type: 'success',
+                title: 'Cliente excluido',
+                description: 'O cliente foi excluido com sucesso.',
+            });
+        } catch(error) {
+            addToast({
+                type: 'error',
+                title: 'Erro ao excluir',
+                description: 'Ocorreu um erro ao excluir cliente, tente novamente.',
+            });
+        } finally {
+            setDeleteConfirmation(false);
+        }
+    }, [addToast]);
+
     return(
         <Container>
             <Header/>
@@ -153,7 +181,7 @@ const Customers: React.FC = () => {
                     { paginationFlag.length ? <h1>Resultados encontrados</h1> : <h1>Cadastrados recentemente</h1> }
                     <ul>
                         { customers.length ? customers.map(customer => (
-                            <Customer data-id={customer.id} key={customer.id}>
+                            <Customer key={customer.id}>
                                 <CustomerOptions>
                                     <span>{customer.name}</span>
                                     <CustomerOptionsContent>
@@ -167,13 +195,23 @@ const Customers: React.FC = () => {
                                         <button type="button">
                                             <RiEdit2Line size={24} title="Editar" />
                                         </button>
-                                        <button type="button">
+                                        <button type="button" onClick={() => setDeleteConfirmation(true)}>
                                             <RiDeleteBin7Line size={22} title="Excluir" />
                                         </button>
+                                        { deleteConfirmation  && 
+                                            <DeleteContainer>
+                                                <DeleteContent>
+                                                    <strong>Deseja realmente excluir esse cliente ?</strong>
+                                                    <div>
+                                                        <button type="button" onClick={() => handleDelete(customer.id)}>Confirmar</button>
+                                                        <button type="button" onClick={() => setDeleteConfirmation(false)}>Cancelar</button>
+                                                    </div>
+                                                </DeleteContent>
+                                            </DeleteContainer>
+                                        }
                                     </CustomerOptionsContent>
                                 </CustomerOptions>
                                 <CustomerData isOpen={!selectedShowCustomer.includes(customer.id)} >
-                                    <Link to={`/customer/${customer.id}`}>Detalhes</Link>
                                     <ul>
                                         <li><span>Data de nasc: </span>{customer.date_birth}</li>
                                         <li><span>Telefone: </span>{customer.phone}</li>
@@ -184,6 +222,9 @@ const Customers: React.FC = () => {
                                         <li><span>Número: </span>{customer.address_number}</li>
                                         <li><span>Bairro: </span>{customer.neighborhood}</li>
                                     </ul>
+                                    <div>
+                                        <Link to={`/customer/${customer.id}`}>Ver histórico completo<RiArrowRightLine size={24}/></Link>
+                                    </div>
                                 </CustomerData>
                             </Customer>
                         )) : <span>Nenhum resultado encontrado</span> }

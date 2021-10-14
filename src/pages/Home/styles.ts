@@ -11,10 +11,7 @@ const appearFromLeft = keyframes`
     }
 `;
 
-export const Container = styled.div`
-    display: grid;
-    grid-template-rows: 10% 85% 5%;
-`;
+export const Container = styled.main``;
 
 export const Header = styled.header`
     width: 100%;
@@ -152,6 +149,7 @@ export const UserFormContent = styled.fieldset`
 
 export const Footer = styled.footer`
     width: 100%;
+    height: 60px;
     margin-top: 20px;
     background: var(--header-color);
     display: flex;
