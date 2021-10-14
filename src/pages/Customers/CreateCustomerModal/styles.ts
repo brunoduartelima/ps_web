@@ -1,11 +1,35 @@
 import styled from "styled-components";
 
-export const Container = styled.main``;
+export const Container = styled.div`
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
 export const Content = styled.div`
-    max-width: 1000px;
-    height: 100%;
-    margin: 32px auto;
-    padding: 0 8rem;
+    width: 1000px;
+    padding: 0 60px 40px;
+    background-color: var(--body-color);
+    border-radius: 20px;
+
+    button:first-child {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        right: calc(-100% + 40px);
+        position: relative;
+        top: 24px;
+    }
+
+    button:last-child {
+        margin-top: 3rem;
+    }
 
     h1 {
         margin-bottom: 12px;
@@ -19,6 +43,7 @@ export const Title = styled.div`
 
     svg {
         color: var(--contrast-color);
+        margin-right: 3rem;
     }
     
     h1 {

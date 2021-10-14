@@ -1,15 +1,19 @@
-import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { useParams } from 'react-router-dom';
-import { stringify } from 'querystring';
 import * as Yup from 'yup';
-import { RiCommunityLine, RiHome4Line, RiRoadMapLine, RiSurveyLine } from 'react-icons/ri';
+import { 
+    RiCommunityLine, 
+    RiHome4Line, 
+    RiRoadMapLine, 
+    RiUserAddLine,
+    RiCloseFill 
+} from 'react-icons/ri';
 import { FiCalendar, FiCreditCard, FiMail, FiPhone, FiUser } from 'react-icons/fi';
 
-import api from '../../services/api';
-import { useToast } from '../../hooks/toast';
-import { maskCpf, maskPhone, maskCep } from '../../utils/inputMasks';
+import api from '../../../services/api';
+import { useToast } from '../../../hooks/toast';
+import { maskCpf, maskPhone, maskCep } from '../../../utils/inputMasks';
 
 import { 
     Container, 
@@ -21,12 +25,10 @@ import {
     AddressContent
 } from './styles';
 
-import Header from '../../components/Header';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
-import getValidationErrors from '../../utils/getValidationErrors';
-import Select from '../../components/Select';
-
+import Input from '../../../components/Input';
+import Button from '../../../components/Button';
+import getValidationErrors from '../../../utils/getValidationErrors';
+import Select from '../../../components/Select';
 
 interface CustomerData {
     name: string;
@@ -41,31 +43,17 @@ interface CustomerData {
     date_birth: string;
 }
 
-const CustomersDetails: React.FC = () => {
+interface CreateCustomerModaProps {
+    onClose(): void;
+}
+
+const CreateCustomerModal: React.FC<CreateCustomerModaProps> = ({ onClose }) => {
     const formRef = useRef<FormHandles>(null);
-    const [customer, setCustomer] = useState<CustomerData>();
     const [document, setDocument] = useState('');
     const [phone, setPhone] = useState('');
     const [cep, setCep] = useState('');
-    const [sex, setSex] = useState('');
 
-    const params = useParams();
     const { addToast } = useToast();
-
-    const customer_id = stringify(params).replace('id=', '');
-
-    useEffect(() => {
-        api.get<CustomerData>(`/customers/details/${customer_id}`).then(
-            response => {
-                const data_customer = response.data;
-                setCustomer(data_customer);
-                setDocument(data_customer.cpf);
-                setPhone(data_customer.phone);
-                setCep(data_customer.cep);
-                setSex(data_customer.sex);
-            }
-        )
-    }, [customer_id]);
 
     const handleSubmit = useCallback(async(data: CustomerData) => {
         try {
@@ -88,18 +76,14 @@ const CustomersDetails: React.FC = () => {
                 abortEarly: false,
             });
 
-            const response = await api.put(`/customers/${customer_id}`, data);
-            const updated_customer = response.data;
-            
-            setCustomer(updated_customer);
-            setDocument(updated_customer.cpf);
-            setPhone(updated_customer.phone);
-            setCep(updated_customer.cep);
+            await api.post('/customers', data);
+
+            onClose();
 
             addToast({
                 type: 'success',
-                title: 'Atualização concluída',
-                description: 'A atualização do cliente foi um sucesso.',
+                title: 'Cadastro concluído',
+                description: 'O cadastro do cliente foi um sucesso.',
             });
 
         } catch (error) {
@@ -113,36 +97,22 @@ const CustomersDetails: React.FC = () => {
 
             addToast({
                 type: 'error',
-                title: 'Erro na atualização',
-                description: 'Ocorreu um erro ao atualizar cliente, tente novamente.',
+                title: 'Erro no cadastro',
+                description: 'Ocorreu um erro ao cadastrar cliente, tente novamente.',
             });
         }
-    }, [addToast, customer_id]);
-
-    function handleSelectSex(event: ChangeEvent<HTMLSelectElement>) {
-        const sex = event.target.value;
-
-        setSex(sex);
-    };
+    }, [addToast, onClose]);
 
     return (
         <Container>
-            <Header/>
             <Content>
+                <button type="button" onClick={onClose}><RiCloseFill size={28} title="Fechar" /></button>
                 <Title>
-                    <RiSurveyLine size={80}/>
-                    <h1>Informações atuais | Cliente</h1>
+                    <RiUserAddLine size={80}/>
+                    <h1>Cadastrar | Cliente</h1>
                 </Title>
                 <Form 
-                    ref={formRef} 
-                    initialData={ customer && {
-                        name: customer.name,
-                        address: customer.address,
-                        address_number: customer.address_number,
-                        neighborhood: customer.neighborhood,
-                        date_birth: customer.date_birth,
-                        email: customer.email,
-                    }}
+                    ref={formRef}
                     onSubmit={handleSubmit}
                 > 
                     <NameContent>
@@ -153,10 +123,9 @@ const CustomersDetails: React.FC = () => {
                         <div>
                             <label htmlFor="sex">Sexo</label>
                             <Select 
-                                value={sex} 
+                                value={this} 
                                 name="sex" 
                                 placeholder="Sexo"
-                                onChange={handleSelectSex}
                             >
                                 <option value="Masculino">Masculino</option>
                                 <option value="Feminino">Feminino</option>
@@ -229,11 +198,11 @@ const CustomersDetails: React.FC = () => {
                         </div>
                     </AddressContent>
                     
-                    <Button type="submit">Atualizar</Button>
+                    <Button type="submit">Cadastrar</Button>
                 </Form>
             </Content>
         </Container>
     )
 }
 
-export default CustomersDetails;
+export default CreateCustomerModal;

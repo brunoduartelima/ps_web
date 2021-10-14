@@ -15,6 +15,7 @@ import { usePagination } from '../../hooks/pagination';
 
 import Header from '../../components/Header';
 import Pagination from '../../components/Pagination';
+import CreateCustomerModal from './CreateCustomerModal';
 
 import {
     Container,
@@ -48,12 +49,13 @@ const Customers: React.FC = () => {
     const [searchName, setSearchName] = useState('');
     const [paginationFlag, setPaginationFlag] = useState('');
     const [selectedShowCustomer, setSelectedShowCustomer] = useState<String[]>([]);
+    const [modalRegistration, setModalRegistration] = useState(false);
 
     const { currentPage, updateCurrentPage } = usePagination();
     const history = useHistory();
 
     useEffect(() => {
-        api.get('customers').then(response => {
+        api.get('/customers').then(response => {
             setCustomers(response.data);
         })
     }, []);
@@ -124,11 +126,6 @@ const Customers: React.FC = () => {
         }
     }, [history, searchName, updateCurrentPage]);
 
-    function test() {
-        
-        console.log('teste')
-    }
-
     return(
         <Container>
             <Header/>
@@ -146,7 +143,7 @@ const Customers: React.FC = () => {
                             <RiFileList3Line size={22} />
                             Listar todos
                         </button>
-                        <button type="button" onClick={() => test()}>
+                        <button type="button" onClick={() => setModalRegistration(true)}>
                             <RiUserAddLine size={22} />
                             Cadastrar
                         </button>
@@ -194,6 +191,7 @@ const Customers: React.FC = () => {
                 </CustomersContent>
                 { totalElements > 0 && <Pagination totalElements={totalElements}  /> }
             </CustomersContainer>
+            { modalRegistration && <CreateCustomerModal onClose={() => setModalRegistration(false)} /> }
         </Container>
     )
 }
