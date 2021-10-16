@@ -12,47 +12,41 @@ import {
 } from 'react-icons/ri';
 
 import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
 import { usePagination } from '../../hooks/pagination';
 
 import Header from '../../components/Header';
 import Pagination from '../../components/Pagination';
-import CreateCustomerModal from './CreateCustomerModal';
 
 import {
     Container,
-    CustomersContainer,
+    EmployeesContainer,
     ServicesContent,
     SearchContent,
-    CustomersContent,
-    Customer,
-    CustomerOptions,
-    CustomerOptionsContent,
+    EmployeesContent,
+    Employee,
+    EmployeeOptions,
+    EmployeeOptionsContent,
     DeleteContainer,
     DeleteContent,
-    CustomerData
+    EmployeeData
 } from './styles';
-import { useToast } from '../../hooks/toast';
 
-interface CustomersData {
+interface EmployeesData {
     id: string;
     name: string;
-    cpf: string;
-    address: string;
-    address_number: string;
-    neighborhood: string;
-    cep: string;
-    sex: string;
-    phone: string;
+    salary: number;
     date_birth: Date;
-    email: string;
+    phone: string;
+    active: boolean;
 }
 
-const Customers: React.FC = () => {
-    const [customers, setCustomers] = useState<CustomersData[]>([]);
+const Employees: React.FC = () => {
+    const [employees, setEmployees] = useState<EmployeesData[]>([]);
     const [totalElements, setTotalElements] = useState(0);
     const [searchName, setSearchName] = useState('');
     const [paginationFlag, setPaginationFlag] = useState('');
-    const [selectedShowCustomer, setSelectedShowCustomer] = useState<String[]>([]);
+    const [selectedShowEmployee, setSelectedShowEmployee] = useState<String[]>([]);
     const [modalRegistration, setModalRegistration] = useState(false);
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
@@ -61,40 +55,41 @@ const Customers: React.FC = () => {
     const history = useHistory();
 
     useEffect(() => {
-        api.get('/customers').then(response => {
-            setCustomers(response.data);
+        api.get('/employees').then(response => {
+            setEmployees(response.data);
+            console.log(response.data);
         })
     }, []);
 
     useEffect(() => {
         if(paginationFlag === 'ListAll') {
-            api.get(`/customers/search/list-all?page=${currentPage}`).then(
+            api.get(`/employees/search/list-all?page=${currentPage}`).then(
                 response => {
-                    setCustomers(response.data[0])
+                    setEmployees(response.data[0])
                     setTotalElements(Number(response.data[1]));
                 }
             )
 
-            history.push(`/customers/search/list-all?page=${currentPage}`);
+            history.push(`/employees/search/list-all?page=${currentPage}`);
         }
         if(paginationFlag === 'Search' && searchName.length) {
-            api.get(`/customers/search?name=${searchName}&page=${currentPage}`).then(
+            api.get(`/employees/search?name=${searchName}&page=${currentPage}`).then(
                 response => {
-                    setCustomers(response.data[0])
+                    setEmployees(response.data[0])
                     setTotalElements(Number(response.data[1]));
                 }
             )
 
-            history.push(`/customers/search?name=${searchName}&page=${currentPage}`);
+            history.push(`/employees/search?name=${searchName}&page=${currentPage}`);
         }
 
     }, [currentPage, totalElements, history, paginationFlag, searchName]);
 
-    const handleListAllCustomers = useCallback(async () => {
+    const handleListAllEmployees = useCallback(async () => {
         try {
-            const response = await api.get(`/customers/search/list-all?page=1`);
-            history.push(`/customers/search/list-all?page=1`);
-            setCustomers(response.data[0]);
+            const response = await api.get(`/employees/search/list-all?page=1`);
+            history.push(`/employees/search/list-all?page=1`);
+            setEmployees(response.data[0]);
             setTotalElements(Number(response.data[1]));
             setPaginationFlag('ListAll');
             updateCurrentPage(1);
@@ -103,26 +98,26 @@ const Customers: React.FC = () => {
         }
     }, [history, updateCurrentPage]);
 
-    const handleShowDataCustomer = useCallback((id: string) => {
-        const alreadySelected = selectedShowCustomer.findIndex(customer => customer === id);
+    const handleShowDataEmployee = useCallback((id: string) => {
+        const alreadySelected = selectedShowEmployee.findIndex(employee => employee === id);
 
         if (alreadySelected > -1) {
-            const filteredCustomer = selectedShowCustomer.filter(customer => customer !== id);
+            const filteredEmployee = selectedShowEmployee.filter(employee => employee !== id);
             
-            setSelectedShowCustomer(filteredCustomer);
+            setSelectedShowEmployee(filteredEmployee);
 
         } else {
-            setSelectedShowCustomer([...selectedShowCustomer, id]);
+            setSelectedShowEmployee([...selectedShowEmployee, id]);
         }
-    }, [selectedShowCustomer]);
+    }, [selectedShowEmployee]);
 
-    const handleSearchCustomer = useCallback(async (event: KeyboardEvent<HTMLInputElement> ) => {
+    const handleSearchEmployee = useCallback(async (event: KeyboardEvent<HTMLInputElement> ) => {
         try {
             const key = event.key;
             if(key === 'Enter' && searchName.length) {
-                const response = await api.get(`/customers/search?name=${searchName}&page=1`);
-                history.push(`/customers/search?name=${searchName}&page=1`);
-                setCustomers(response.data[0]);
+                const response = await api.get(`/employees/search?name=${searchName}&page=1`);
+                history.push(`/employees/search?name=${searchName}&page=1`);
+                setEmployees(response.data[0]);
                 setTotalElements(Number(response.data[1]));
                 setPaginationFlag('Search');
                 updateCurrentPage(1);
@@ -134,20 +129,20 @@ const Customers: React.FC = () => {
 
     const handleDelete = useCallback(async (id: string) => {
         try {
-            await api.delete(`/customers/${id}`);
+            await api.delete(`/employees/${id}`);
 
-            setCustomers(oldCustomers => oldCustomers.filter(customer => customer.id !== id));
+            setEmployees(oldEmployees => oldEmployees.filter(employee => employee.id !== id));
 
             addToast({
                 type: 'success',
-                title: 'Cliente excluido',
-                description: 'O cliente foi excluido com sucesso.',
+                title: 'Colaborador excluido',
+                description: 'O colaborador foi excluido com sucesso.',
             });
         } catch(error) {
             addToast({
                 type: 'error',
                 title: 'Erro ao excluir',
-                description: 'Ocorreu um erro ao excluir cliente, tente novamente.',
+                description: 'Ocorreu um erro ao excluir colaborador, tente novamente.',
             });
         } finally {
             setDeleteConfirmation(false);
@@ -157,16 +152,16 @@ const Customers: React.FC = () => {
     return(
         <Container>
             <Header/>
-            <CustomersContainer>
+            <EmployeesContainer>
                 <ServicesContent>
                     <form onSubmit={e => e.preventDefault()}>
                         <SearchContent>
                             <div><RiSearchLine size={22} /></div>
-                            <input type="text" name="name" placeholder="Procurar" onKeyPress={handleSearchCustomer} onChange={e => setSearchName(e.target.value)}/>
+                            <input type="text" name="name" placeholder="Procurar" onKeyPress={handleSearchEmployee} onChange={e => setSearchName(e.target.value)}/>
                         </SearchContent>
                     </form>
                     <div>
-                        <button type="button" onClick={() => handleListAllCustomers()}>
+                        <button type="button" onClick={() => handleListAllEmployees()}>
                             <RiFileList3Line size={22} />
                             Listar todos
                         </button>
@@ -176,17 +171,17 @@ const Customers: React.FC = () => {
                         </button>
                     </div>
                 </ServicesContent>
-                <CustomersContent>
+                <EmployeesContent>
                     { paginationFlag.length ? <h1>Resultados encontrados: { totalElements }</h1> : <h1>Cadastrados recentemente</h1> }
                     <ul>
-                        { customers.length ? customers.map(customer => (
-                            <Customer key={customer.id}>
-                                <CustomerOptions>
-                                    <span>{customer.name}</span>
-                                    <CustomerOptionsContent>
-                                        <button type="button" onClick={() => handleShowDataCustomer(customer.id)}>
+                        { employees.length ? employees.map(employee => (
+                            <Employee key={employee.id}>
+                                <EmployeeOptions>
+                                    <span>{employee.name}</span>
+                                    <EmployeeOptionsContent>
+                                        <button type="button" onClick={() => handleShowDataEmployee(employee.id)}>
                                             <div>
-                                                {selectedShowCustomer.includes(customer.id) ?
+                                                {selectedShowEmployee.includes(employee.id) ?
                                                 <RiBookOpenLine size={22} title="Fechar" /> : 
                                                 <RiBook2Line size={22} title="Mostrar" /> }
                                             </div>    
@@ -200,40 +195,36 @@ const Customers: React.FC = () => {
                                         { deleteConfirmation  && 
                                             <DeleteContainer>
                                                 <DeleteContent>
-                                                    <strong>Deseja realmente excluir esse cliente ?</strong>
+                                                    <strong>Deseja realmente excluir esse colaborador ?</strong>
                                                     <div>
-                                                        <button type="button" onClick={() => handleDelete(customer.id)}>Confirmar</button>
+                                                        <button type="button" onClick={() => handleDelete(employee.id)}>Confirmar</button>
                                                         <button type="button" onClick={() => setDeleteConfirmation(false)}>Cancelar</button>
                                                     </div>
                                                 </DeleteContent>
                                             </DeleteContainer>
                                         }
-                                    </CustomerOptionsContent>
-                                </CustomerOptions>
-                                <CustomerData isOpen={!selectedShowCustomer.includes(customer.id)} >
+                                    </EmployeeOptionsContent>
+                                </EmployeeOptions>
+                                <EmployeeData isOpen={!selectedShowEmployee.includes(employee.id)} >
                                     <ul>
-                                        <li><span>Data de nasc: </span>{customer.date_birth}</li>
-                                        <li><span>Telefone: </span>{customer.phone}</li>
-                                        <li><span>Email: </span>{customer.email}</li>
-                                        <li><span>CPF: </span>{customer.cpf}</li>
-                                        <strong>Endereço</strong>
-                                        <li><span>Rua: </span>{customer.address}</li>
-                                        <li><span>Número: </span>{customer.address_number}</li>
-                                        <li><span>Bairro: </span>{customer.neighborhood}</li>
+                                        <li><span>Data de nasc: </span>{employee.date_birth}</li>
+                                        <li><span>Telefone: </span>{employee.phone}</li>
+                                        <li><span>Salário: </span>R$ {employee.salary}</li>
+                                        <li><span>Ativo: </span>{employee.active ? 'Ativo' : 'Desativado'}</li>
                                     </ul>
                                     <div>
-                                        <Link to={`/customer/${customer.id}`}>Ver histórico completo<RiArrowRightLine size={24}/></Link>
+                                        <Link to={`/employee/${employee.id}`}>Ver histórico completo<RiArrowRightLine size={24}/></Link>
                                     </div>
-                                </CustomerData>
-                            </Customer>
+                                </EmployeeData>
+                            </Employee>
                         )) : <span>Nenhum resultado encontrado</span> }
                     </ul>
-                </CustomersContent>
+                </EmployeesContent>
                 { totalElements > 0 && <Pagination totalElements={totalElements}  /> }
-            </CustomersContainer>
-            { modalRegistration && <CreateCustomerModal onClose={() => setModalRegistration(false)} /> }
+            </EmployeesContainer>
+            {/* { modalRegistration && <CreateEmployeeModal onClose={() => setModalRegistration(false)} /> } */}
         </Container>
     )
 }
 
-export default Customers;
+export default Employees;

@@ -11,6 +11,7 @@ import CompanyRegister from '../pages/CompanyRegister';
 import Dashboard from '../pages/Dashboard';
 import Customers from '../pages/Customers';
 import CustomersDetails from '../pages/CustomersDetails';
+import Employees from '../pages/Employees';
 
 const Routes: React.FC = () => (
     <Switch>
@@ -22,7 +23,8 @@ const Routes: React.FC = () => (
 
         <Route  path="/dashboard" component={Dashboard} isPrivate />
         <Route path="/customers" component={Customers} isPrivate /> 
-        <Route path="/customer/:id" component={CustomersDetails} isPrivate /> 
+        <Route path="/customer/:id" component={CustomersDetails} isPrivate />
+        <Route path="/employees" component={Employees} isPrivate />
     </Switch>
 );
 
