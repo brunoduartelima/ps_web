@@ -122,11 +122,7 @@ const CreateCustomerModal: React.FC<CreateCustomerModaProps> = ({ onClose }) => 
                         </div>
                         <div>
                             <label htmlFor="sex">Sexo</label>
-                            <Select 
-                                value={this} 
-                                name="sex" 
-                                placeholder="Sexo"
-                            >
+                            <Select name="sex">
                                 <option value="Masculino">Masculino</option>
                                 <option value="Feminino">Feminino</option>
                             </Select>

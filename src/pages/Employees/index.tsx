@@ -17,6 +17,7 @@ import { usePagination } from '../../hooks/pagination';
 
 import Header from '../../components/Header';
 import Pagination from '../../components/Pagination';
+import CreateEmployeeModal from './CreateEmployeeModal';
 
 import {
     Container,
@@ -210,7 +211,7 @@ const Employees: React.FC = () => {
                                         <li><span>Data de nasc: </span>{employee.date_birth}</li>
                                         <li><span>Telefone: </span>{employee.phone}</li>
                                         <li><span>Salário: </span>R$ {employee.salary}</li>
-                                        <li><span>Ativo: </span>{employee.active ? 'Ativo' : 'Desativado'}</li>
+                                        <li><span>Estado atual: </span>{employee.active ? 'Ativo' : 'Desligado'}</li>
                                     </ul>
                                     <div>
                                         <Link to={`/employee/${employee.id}`}>Ver histórico completo<RiArrowRightLine size={24}/></Link>
@@ -222,7 +223,7 @@ const Employees: React.FC = () => {
                 </EmployeesContent>
                 { totalElements > 0 && <Pagination totalElements={totalElements}  /> }
             </EmployeesContainer>
-            {/* { modalRegistration && <CreateEmployeeModal onClose={() => setModalRegistration(false)} /> } */}
+            { modalRegistration && <CreateEmployeeModal onClose={() => setModalRegistration(false)} /> }
         </Container>
     )
 }

@@ -19,6 +19,7 @@ export const Container = styled.div<ContainerProps>`
     display: flex;
     align-items: center;
     margin-bottom: 12px;
+    position: relative;
 
     & + div {
         margin-top: 8px;
@@ -49,8 +50,10 @@ export const Container = styled.div<ContainerProps>`
 
 export const Error = styled(Tooltip)`
     height: 20px;
-    margin-left: 16px;
-    
+    margin: 0 10px;
+    position: absolute;
+    right: 0;
+
     svg {
         margin: 0;
     }

@@ -10,6 +10,7 @@ import { FiCalendar, FiCreditCard, FiMail, FiPhone, FiUser } from 'react-icons/f
 import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 import { maskCpf, maskPhone, maskCep } from '../../utils/inputMasks';
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import { 
     Container, 
@@ -24,7 +25,6 @@ import {
 import Header from '../../components/Header';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import getValidationErrors from '../../utils/getValidationErrors';
 import Select from '../../components/Select';
 
 
