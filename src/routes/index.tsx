@@ -12,6 +12,7 @@ import Dashboard from '../pages/Dashboard';
 import Customers from '../pages/Customers';
 import CustomersDetails from '../pages/CustomersDetails';
 import Employees from '../pages/Employees';
+import EmployeesDetails from '../pages/EmployeesDetails';
 
 const Routes: React.FC = () => (
     <Switch>
@@ -24,7 +25,9 @@ const Routes: React.FC = () => (
         <Route  path="/dashboard" component={Dashboard} isPrivate />
         <Route path="/customers" component={Customers} isPrivate /> 
         <Route path="/customer/:id" component={CustomersDetails} isPrivate />
+        <Route path="/customer/:id" component={CustomersDetails} isPrivate />
         <Route path="/employees" component={Employees} isPrivate />
+        <Route path="/employee/:id" component={EmployeesDetails} isPrivate />
     </Switch>
 );
 

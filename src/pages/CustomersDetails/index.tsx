@@ -119,11 +119,11 @@ const CustomersDetails: React.FC = () => {
         }
     }, [addToast, customer_id]);
 
-    function handleSelectSex(event: ChangeEvent<HTMLSelectElement>) {
+    const handleSelectSex = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
         const sex = event.target.value;
 
         setSex(sex);
-    };
+    }, []);
 
     return (
         <Container>
@@ -154,8 +154,7 @@ const CustomersDetails: React.FC = () => {
                             <label htmlFor="sex">Sexo</label>
                             <Select 
                                 value={sex} 
-                                name="sex" 
-                                placeholder="Sexo"
+                                name="sex"
                                 onChange={handleSelectSex}
                             >
                                 <option value="Masculino">Masculino</option>
