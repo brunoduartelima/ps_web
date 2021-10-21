@@ -35,6 +35,12 @@ export const Content = styled.div`
         margin-bottom: 12px;
         color: var(--contrast-color);
     }
+
+    p {
+        text-align: center;
+        font-size: 1.5rem;
+    }
+
 `;
 
 export const Title = styled.div`
@@ -52,26 +58,16 @@ export const Title = styled.div`
     }
 `;
 
-export const NameContent = styled.section`
+export const FormSection = styled.section`
     display: flex;
     justify-content: space-between;
     margin-top: 4rem;
 
-
     input {
         width: 45rem;
     }
-`;
 
-export const ContactContent = styled.section`
-    display: flex;
-    justify-content: space-between;
-
-    input {
-        width: 45rem;
+    select {
+        width: 49.5rem;
     }
-`;
-
-export const DocumentContent = styled.section`
-    width: 54rem;
 `;

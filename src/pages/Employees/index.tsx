@@ -8,7 +8,8 @@ import {
     RiFileList3Line,
     RiEdit2Line,
     RiDeleteBin7Line,
-    RiArrowRightLine
+    RiArrowRightLine,
+    RiUserSettingsLine
 } from 'react-icons/ri';
 
 import api from '../../services/api';
@@ -58,33 +59,39 @@ const Employees: React.FC = () => {
     useEffect(() => {
         api.get('/employees').then(response => {
             setEmployees(response.data);
-            console.log(response.data);
-        })
+        });
     }, []);
 
     useEffect(() => {
-        if(paginationFlag === 'ListAll') {
-            api.get(`/employees/search/list-all?page=${currentPage}`).then(
-                response => {
-                    setEmployees(response.data[0])
-                    setTotalElements(Number(response.data[1]));
-                }
-            )
-
-            history.push(`/employees/search/list-all?page=${currentPage}`);
+        try {
+            if(paginationFlag === 'ListAll') {
+                api.get(`/employees/search/list-all?page=${currentPage}`).then(
+                    response => {
+                        setEmployees(response.data[0])
+                        setTotalElements(Number(response.data[1]));
+                    }
+                )
+    
+                history.push(`/employees/search/list-all?page=${currentPage}`);
+            }
+            if(paginationFlag === 'Search' && searchName.length) {
+                api.get(`/employees/search?name=${searchName}&page=${currentPage}`).then(
+                    response => {
+                        setEmployees(response.data[0])
+                        setTotalElements(Number(response.data[1]));
+                    }
+                )
+    
+                history.push(`/employees/search?name=${searchName}&page=${currentPage}`);
+            }
+        } catch {
+            addToast({
+                type: 'error',
+                title: 'Erro ao listar',
+                description: 'Ocorreu um erro ao listar colaboradores, tente novamente.',
+            });
         }
-        if(paginationFlag === 'Search' && searchName.length) {
-            api.get(`/employees/search?name=${searchName}&page=${currentPage}`).then(
-                response => {
-                    setEmployees(response.data[0])
-                    setTotalElements(Number(response.data[1]));
-                }
-            )
-
-            history.push(`/employees/search?name=${searchName}&page=${currentPage}`);
-        }
-
-    }, [currentPage, totalElements, history, paginationFlag, searchName]);
+    }, [currentPage, totalElements, history, paginationFlag, searchName, addToast]);
 
     const handleListAllEmployees = useCallback(async () => {
         try {
@@ -95,9 +102,13 @@ const Employees: React.FC = () => {
             setPaginationFlag('ListAll');
             updateCurrentPage(1);
         } catch {
-
+            addToast({
+                type: 'error',
+                title: 'Erro ao listar',
+                description: 'Ocorreu um erro ao listar colaboradores, tente novamente.',
+            });
         }
-    }, [history, updateCurrentPage]);
+    }, [history, updateCurrentPage, addToast]);
 
     const handleShowDataEmployee = useCallback((id: string) => {
         const alreadySelected = selectedShowEmployee.findIndex(employee => employee === id);
@@ -123,10 +134,14 @@ const Employees: React.FC = () => {
                 setPaginationFlag('Search');
                 updateCurrentPage(1);
             }
-        } catch (error) {
-            
+        } catch {
+            addToast({
+                type: 'error',
+                title: 'Erro ao listar',
+                description: 'Ocorreu um erro ao listar colaboradores, tente novamente.',
+            });
         }
-    }, [history, searchName, updateCurrentPage]);
+    }, [history, searchName, updateCurrentPage, addToast]);
 
     const handleDelete = useCallback(async (id: string) => {
         try {
@@ -170,6 +185,10 @@ const Employees: React.FC = () => {
                             <RiUserAddLine size={22} />
                             Cadastrar
                         </button>
+                        <Link to="/users-employees">
+                            <RiUserSettingsLine size={22} />
+                            Usuários
+                        </Link>
                     </div>
                 </ServicesContent>
                 <EmployeesContent>
@@ -223,7 +242,11 @@ const Employees: React.FC = () => {
                 </EmployeesContent>
                 { totalElements > 0 && <Pagination totalElements={totalElements}  /> }
             </EmployeesContainer>
-            { modalRegistration && <CreateEmployeeModal onClose={() => setModalRegistration(false)} /> }
+            { modalRegistration && 
+                <CreateEmployeeModal 
+                    onClose={() => setModalRegistration(false)}
+                /> 
+            }
         </Container>
     )
 }

@@ -49,6 +49,19 @@ export const ServicesContent = styled.div`
         font-size: 16px;
         font-weight: 500;
     }
+
+    a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        font-weight: 500;
+        color: var(--details-color);
+        transition: all  .4s ease-in-out;
+    }
+
+    a:hover{
+        color: var(--contrast-color);
+    }
 `;
 
 export const SearchContent = styled.div`

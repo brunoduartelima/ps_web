@@ -67,28 +67,35 @@ const Customers: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if(paginationFlag === 'ListAll') {
-            api.get(`/customers/search/list-all?page=${currentPage}`).then(
-                response => {
-                    setCustomers(response.data[0])
-                    setTotalElements(Number(response.data[1]));
-                }
-            )
-
-            history.push(`/customers/search/list-all?page=${currentPage}`);
+        try {
+            if(paginationFlag === 'ListAll') {
+                api.get(`/customers/search/list-all?page=${currentPage}`).then(
+                    response => {
+                        setCustomers(response.data[0])
+                        setTotalElements(Number(response.data[1]));
+                    }
+                )
+    
+                history.push(`/customers/search/list-all?page=${currentPage}`);
+            }
+            if(paginationFlag === 'Search' && searchName.length) {
+                api.get(`/customers/search?name=${searchName}&page=${currentPage}`).then(
+                    response => {
+                        setCustomers(response.data[0])
+                        setTotalElements(Number(response.data[1]));
+                    }
+                )
+    
+                history.push(`/customers/search?name=${searchName}&page=${currentPage}`);
+            }
+        } catch {
+            addToast({
+                type: 'error',
+                title: 'Erro ao listar',
+                description: 'Ocorreu um erro ao listar clientes, tente novamente.',
+            });
         }
-        if(paginationFlag === 'Search' && searchName.length) {
-            api.get(`/customers/search?name=${searchName}&page=${currentPage}`).then(
-                response => {
-                    setCustomers(response.data[0])
-                    setTotalElements(Number(response.data[1]));
-                }
-            )
-
-            history.push(`/customers/search?name=${searchName}&page=${currentPage}`);
-        }
-
-    }, [currentPage, totalElements, history, paginationFlag, searchName]);
+    }, [currentPage, totalElements, history, paginationFlag, searchName, addToast]);
 
     const handleListAllCustomers = useCallback(async () => {
         try {
@@ -99,9 +106,13 @@ const Customers: React.FC = () => {
             setPaginationFlag('ListAll');
             updateCurrentPage(1);
         } catch {
-
+            addToast({
+                type: 'error',
+                title: 'Erro ao listar',
+                description: 'Ocorreu um erro ao listar colaboradores, tente novamente.',
+            });
         }
-    }, [history, updateCurrentPage]);
+    }, [history, updateCurrentPage, addToast]);
 
     const handleShowDataCustomer = useCallback((id: string) => {
         const alreadySelected = selectedShowCustomer.findIndex(customer => customer === id);
@@ -127,10 +138,14 @@ const Customers: React.FC = () => {
                 setPaginationFlag('Search');
                 updateCurrentPage(1);
             }
-        } catch (error) {
-            
+        } catch {
+            addToast({
+                type: 'error',
+                title: 'Erro ao listar',
+                description: 'Ocorreu um erro ao listar colaboradores, tente novamente.',
+            });
         }
-    }, [history, searchName, updateCurrentPage]);
+    }, [history, searchName, updateCurrentPage, addToast]);
 
     const handleDelete = useCallback(async (id: string) => {
         try {
@@ -143,7 +158,7 @@ const Customers: React.FC = () => {
                 title: 'Cliente excluido',
                 description: 'O cliente foi excluido com sucesso.',
             });
-        } catch(error) {
+        } catch {
             addToast({
                 type: 'error',
                 title: 'Erro ao excluir',
