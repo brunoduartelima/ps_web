@@ -131,21 +131,20 @@ export const EmployeeOptionsContent = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+`;
 
-    button {
-        border: none;
-        background-color: transparent;
-        margin-right: 12px;
-        color: var(--details-color);
+export const OptionButton = styled.button`
+    border: none;
+    background-color: transparent;
+    margin-right: 1.5rem;
+    color: var(--details-color);
 
-        svg {
-            transition: all  .2s ease-in-out;
-        }
+    svg {
+        transition: all .2s ease-in-out;
+    }
 
-        svg:hover {
-            color: var(--contrast-color);
-        }
-
+    svg:hover {
+        color: var(--contrast-color);
     }
 `;
 
@@ -177,6 +176,7 @@ export const DeleteContent = styled.div`
         display: flex;
         justify-content: space-between;
     }
+    
     button {
         width: 150px;
         height: 50px;
@@ -186,12 +186,17 @@ export const DeleteContent = styled.div`
         border: none;
         border-radius: 20px;
         font-weight: 700;
+        transition: all .2s ease-in-out;
     }
 
     button:last-child {
         background-color: #c53030;
         color: #fff;
-        margin-right: 0;
+        margin-left: 2rem;
+    }
+
+    button:hover {
+        opacity: 0.7;
     }
 `;
 

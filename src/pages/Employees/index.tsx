@@ -29,6 +29,7 @@ import {
     Employee,
     EmployeeOptions,
     EmployeeOptionsContent,
+    OptionButton,
     DeleteContainer,
     DeleteContent,
     EmployeeData
@@ -199,19 +200,19 @@ const Employees: React.FC = () => {
                                 <EmployeeOptions>
                                     <span>{employee.name}</span>
                                     <EmployeeOptionsContent>
-                                        <button type="button" onClick={() => handleShowDataEmployee(employee.id)}>
+                                        <OptionButton type="button" onClick={() => handleShowDataEmployee(employee.id)}>
                                             <div>
                                                 {selectedShowEmployee.includes(employee.id) ?
                                                 <RiBookOpenLine size={22} title="Fechar" /> : 
                                                 <RiBook2Line size={22} title="Mostrar" /> }
                                             </div>    
-                                        </button>
-                                        <button type="button">
+                                        </OptionButton>
+                                        <OptionButton type="button">
                                             <RiEdit2Line size={24} title="Editar" />
-                                        </button>
-                                        <button type="button" onClick={() => setDeleteConfirmation(true)}>
+                                        </OptionButton>
+                                        <OptionButton type="button" onClick={() => setDeleteConfirmation(true)}>
                                             <RiDeleteBin7Line size={22} title="Excluir" />
-                                        </button>
+                                        </OptionButton>
                                         { deleteConfirmation  && 
                                             <DeleteContainer>
                                                 <DeleteContent>

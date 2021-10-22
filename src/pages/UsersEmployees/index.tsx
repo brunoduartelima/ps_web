@@ -96,7 +96,7 @@ const UsersEmployees: React.FC = () => {
                             { deleteConfirmation  && 
                                 <DeleteContainer>
                                     <DeleteContent>
-                                        <strong>Deseja realmente excluir esse colaborador ?</strong>
+                                        <strong>Deseja realmente excluir esse usuário ?</strong>
                                         <div>
                                             <button type="button" onClick={() => handleDelete(user.id)}>Confirmar</button>
                                             <button type="button" onClick={() => setDeleteConfirmation(false)}>Cancelar</button>

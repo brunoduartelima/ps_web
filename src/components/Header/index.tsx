@@ -44,18 +44,6 @@ const Header: React.FC = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/sales">
-                            <FiShoppingCart />
-                            Vendas
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/financials">
-                            <FiBarChart />
-                            Financeiro
-                        </Link>
-                    </li>
-                    <li>
                         <Link to="/products">
                             <FiPackage />
                             Produtos
@@ -65,6 +53,18 @@ const Header: React.FC = () => {
                         <Link to="/services">
                             <RiHandCoinLine />
                             Serviços
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/sales">
+                            <FiShoppingCart />
+                            Vendas
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/financials">
+                            <FiBarChart />
+                            Financeiro
                         </Link>
                     </li>
                 </ul>

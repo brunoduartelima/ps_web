@@ -132,11 +132,16 @@ export const DeleteContent = styled.div`
         border: none;
         border-radius: 20px;
         font-weight: 700;
+        transition: all .2s ease-in-out;
     }
 
     button:last-child {
         background-color: #c53030;
         color: #fff;
-        margin-right: 0;
+        margin-left: 2rem;
+    }
+
+    button:hover {
+        opacity: 0.7;
     }
 `;
