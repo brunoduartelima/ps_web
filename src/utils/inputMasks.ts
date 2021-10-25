@@ -24,3 +24,21 @@ export function maskCep(value: string){
 
     return value;
 }
+
+export function maskMoney(value: string){
+    value = value.replace(/[^\d]+/gi,'').split('').reverse().join('');
+    var result  = "";
+    var mask = "###.###.###.###.###,##".split('').reverse().join('');
+    for (var x=0, y=0; x < mask.length && y < value.length;) {
+      if (mask.charAt(x) !== '#') {
+        result += mask.charAt(x);
+        x++;
+      } else {
+        result += value.charAt(y);
+        y++;
+        x++;
+      }
+    }
+    value = result.split('').reverse().join('');
+    return value;
+}

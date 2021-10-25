@@ -14,6 +14,7 @@ import CustomersDetails from '../pages/CustomersDetails';
 import Employees from '../pages/Employees';
 import EmployeesDetails from '../pages/EmployeesDetails';
 import UsersEmployees from '../pages/UsersEmployees';
+import Products from '../pages/Products';
 
 const Routes: React.FC = () => (
     <Switch>
@@ -30,6 +31,7 @@ const Routes: React.FC = () => (
         <Route path="/employees" component={Employees} isPrivate />
         <Route path="/employee/:id" component={EmployeesDetails} isPrivate />
         <Route path="/users-employees" component={UsersEmployees} isPrivate />
+        <Route path="/products" component={Products} isPrivate />
     </Switch>
 );
 

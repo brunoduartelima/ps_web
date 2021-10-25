@@ -3,12 +3,13 @@ import { useHistory, Link } from 'react-router-dom';
 import { 
     RiSearchLine,
     RiBook2Line, 
-    RiBookOpenLine, 
-    RiUserAddLine, 
+    RiBookOpenLine,
     RiFileList3Line,
     RiEdit2Line,
     RiDeleteBin7Line,
-    RiArrowRightLine
+    RiArrowRightLine,
+    RiAddFill,
+    RiSurveyLine
 } from 'react-icons/ri';
 
 import api from '../../services/api';
@@ -16,44 +17,41 @@ import { usePagination } from '../../hooks/pagination';
 
 import Header from '../../components/Header';
 import Pagination from '../../components/Pagination';
-import CreateCustomerModal from './CreateCustomerModal';
+import CreateProductModal from './CreateProductsModal';
 
 import {
     Container,
-    CustomersContainer,
+    ProductsContainer,
     ServicesContent,
     SearchContent,
-    CustomersContent,
-    Customer,
-    CustomerOptions,
-    CustomerOptionsContent,
+    ProductsContent,
+    Product,
+    ProductOptions,
+    ProductOptionsContent,
     OptionButton,
     DeleteContainer,
     DeleteContent,
-    CustomerData
+    ProductData
 } from './styles';
+
 import { useToast } from '../../hooks/toast';
 
-interface CustomersData {
+interface ProductsData {
     id: string;
     name: string;
-    cpf: string;
-    address: string;
-    address_number: string;
-    neighborhood: string;
-    cep: string;
-    sex: string;
-    phone: string;
-    date_birth: Date;
-    email: string;
+    code?: string;
+    description?: string;
+    price: number;
+    quantity: number;
+    average_cost: number;
 }
 
-const Customers: React.FC = () => {
-    const [customers, setCustomers] = useState<CustomersData[]>([]);
+const Products: React.FC = () => {
+    const [products, setProducts] = useState<ProductsData[]>([]);
     const [totalElements, setTotalElements] = useState(0);
     const [searchName, setSearchName] = useState('');
     const [paginationFlag, setPaginationFlag] = useState('');
-    const [selectedShowCustomer, setSelectedShowCustomer] = useState<String[]>([]);
+    const [selectedShowProduct, setSelectedShowProduct] = useState<String[]>([]);
     const [modalRegistration, setModalRegistration] = useState(false);
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
@@ -62,47 +60,47 @@ const Customers: React.FC = () => {
     const history = useHistory();
 
     useEffect(() => {
-        api.get('/customers').then(response => {
-            setCustomers(response.data);
+        api.get('/products').then(response => {
+            setProducts(response.data);
         })
     }, []);
 
     useEffect(() => {
         try {
             if(paginationFlag === 'ListAll') {
-                api.get(`/customers/search/list-all?page=${currentPage}`).then(
+                api.get(`/products/search/list-all?page=${currentPage}`).then(
                     response => {
-                        setCustomers(response.data[0])
+                        setProducts(response.data[0]);
                         setTotalElements(Number(response.data[1]));
                     }
                 )
     
-                history.push(`/customers/search/list-all?page=${currentPage}`);
+                history.push(`/products/search/list-all?page=${currentPage}`);
             }
             if(paginationFlag === 'Search' && searchName.length) {
-                api.get(`/customers/search?name=${searchName}&page=${currentPage}`).then(
+                api.get(`/products/search?name=${searchName}&page=${currentPage}`).then(
                     response => {
-                        setCustomers(response.data[0])
+                        setProducts(response.data[0]);
                         setTotalElements(Number(response.data[1]));
                     }
                 )
     
-                history.push(`/customers/search?name=${searchName}&page=${currentPage}`);
+                history.push(`/products/search?name=${searchName}&page=${currentPage}`);
             }
         } catch {
             addToast({
                 type: 'error',
                 title: 'Erro ao listar',
-                description: 'Ocorreu um erro ao listar clientes, tente novamente.',
+                description: 'Ocorreu um erro ao listar produtos, tente novamente.',
             });
         }
     }, [currentPage, totalElements, history, paginationFlag, searchName, addToast]);
 
-    const handleListAllCustomers = useCallback(async () => {
+    const handleListAllProducts = useCallback(async () => {
         try {
-            const response = await api.get(`/customers/search/list-all?page=1`);
-            history.push(`/customers/search/list-all?page=1`);
-            setCustomers(response.data[0]);
+            const response = await api.get(`/products/search/list-all?page=1`);
+            history.push(`/products/search/list-all?page=1`);
+            setProducts(response.data[0]);
             setTotalElements(Number(response.data[1]));
             setPaginationFlag('ListAll');
             updateCurrentPage(1);
@@ -110,31 +108,31 @@ const Customers: React.FC = () => {
             addToast({
                 type: 'error',
                 title: 'Erro ao listar',
-                description: 'Ocorreu um erro ao listar clientes, tente novamente.',
+                description: 'Ocorreu um erro ao listar produtos, tente novamente.',
             });
         }
     }, [history, updateCurrentPage, addToast]);
 
-    const handleShowDataCustomer = useCallback((id: string) => {
-        const alreadySelected = selectedShowCustomer.findIndex(customer => customer === id);
+    const handleShowDataProduct = useCallback((id: string) => {
+        const alreadySelected = selectedShowProduct.findIndex(product => product === id);
 
         if (alreadySelected > -1) {
-            const filteredCustomer = selectedShowCustomer.filter(customer => customer !== id);
+            const filteredProduct = selectedShowProduct.filter(product => product !== id);
             
-            setSelectedShowCustomer(filteredCustomer);
+            setSelectedShowProduct(filteredProduct);
 
         } else {
-            setSelectedShowCustomer([...selectedShowCustomer, id]);
+            setSelectedShowProduct([...selectedShowProduct, id]);
         }
-    }, [selectedShowCustomer]);
+    }, [selectedShowProduct]);
 
-    const handleSearchCustomer = useCallback(async (event: KeyboardEvent<HTMLInputElement> ) => {
+    const handleSearchProduct = useCallback(async (event: KeyboardEvent<HTMLInputElement> ) => {
         try {
             const key = event.key;
             if(key === 'Enter' && searchName.length) {
-                const response = await api.get(`/customers/search?name=${searchName}&page=1`);
-                history.push(`/customers/search?name=${searchName}&page=1`);
-                setCustomers(response.data[0]);
+                const response = await api.get(`/products/search?name=${searchName}&page=1`);
+                history.push(`/products/search?name=${searchName}&page=1`);
+                setProducts(response.data[0]);
                 setTotalElements(Number(response.data[1]));
                 setPaginationFlag('Search');
                 updateCurrentPage(1);
@@ -143,27 +141,27 @@ const Customers: React.FC = () => {
             addToast({
                 type: 'error',
                 title: 'Erro ao listar',
-                description: 'Ocorreu um erro ao listar clientes, tente novamente.',
+                description: 'Ocorreu um erro ao listar produtos, tente novamente.',
             });
         }
     }, [history, searchName, updateCurrentPage, addToast]);
 
     const handleDelete = useCallback(async (id: string) => {
         try {
-            await api.delete(`/customers/${id}`);
+            await api.delete(`/products/${id}`);
 
-            setCustomers(oldCustomers => oldCustomers.filter(customer => customer.id !== id));
+            setProducts(oldProducts => oldProducts.filter(product => product.id !== id));
 
             addToast({
                 type: 'success',
-                title: 'Cliente excluido',
-                description: 'O cliente foi excluido com sucesso.',
+                title: 'Produto excluido',
+                description: 'O produto foi excluido com sucesso.',
             });
         } catch {
             addToast({
                 type: 'error',
                 title: 'Erro ao excluir',
-                description: 'Ocorreu um erro ao excluir cliente, tente novamente.',
+                description: 'Ocorreu um erro ao excluir produto, tente novamente.',
             });
         } finally {
             setDeleteConfirmation(false);
@@ -173,36 +171,40 @@ const Customers: React.FC = () => {
     return(
         <Container>
             <Header/>
-            <CustomersContainer>
+            <ProductsContainer>
                 <ServicesContent>
                     <form onSubmit={e => e.preventDefault()}>
                         <SearchContent>
                             <div><RiSearchLine size={22} /></div>
-                            <input type="text" name="name" placeholder="Procurar" onKeyPress={handleSearchCustomer} onChange={e => setSearchName(e.target.value)}/>
+                            <input type="text" name="name" placeholder="Procurar" onKeyPress={handleSearchProduct} onChange={e => setSearchName(e.target.value)}/>
                         </SearchContent>
                     </form>
                     <div>
-                        <button type="button" onClick={() => handleListAllCustomers()}>
+                        <button type="button" onClick={() => handleListAllProducts()}>
                             <RiFileList3Line size={22} />
                             Listar todos
                         </button>
                         <button type="button" onClick={() => setModalRegistration(true)}>
-                            <RiUserAddLine size={22} />
+                            <RiAddFill size={22} />
                             Cadastrar
                         </button>
+                        <Link to="/stocks">
+                            <RiSurveyLine size={22} />
+                            Estoque
+                        </Link>
                     </div>
                 </ServicesContent>
-                <CustomersContent>
+                <ProductsContent>
                     { paginationFlag.length ? <h1>Resultados encontrados: { totalElements }</h1> : <h1>Cadastrados recentemente</h1> }
                     <ul>
-                        { customers.length ? customers.map(customer => (
-                            <Customer key={customer.id}>
-                                <CustomerOptions>
-                                    <span>{customer.name}</span>
-                                    <CustomerOptionsContent>
-                                        <OptionButton type="button" onClick={() => handleShowDataCustomer(customer.id)}>
+                        { products.length ? products.map(product => (
+                            <Product key={product.id}>
+                                <ProductOptions>
+                                    <span>{product.name}</span>
+                                    <ProductOptionsContent>
+                                        <OptionButton type="button" onClick={() => handleShowDataProduct(product.id)}>
                                             <div>
-                                                {selectedShowCustomer.includes(customer.id) ?
+                                                {selectedShowProduct.includes(product.id) ?
                                                 <RiBookOpenLine size={22} title="Fechar" /> : 
                                                 <RiBook2Line size={22} title="Mostrar" /> }
                                             </div>    
@@ -216,40 +218,37 @@ const Customers: React.FC = () => {
                                         { deleteConfirmation  && 
                                             <DeleteContainer>
                                                 <DeleteContent>
-                                                    <strong>Deseja realmente excluir esse cliente ?</strong>
+                                                    <strong>Deseja realmente excluir esse produto ?</strong>
                                                     <div>
-                                                        <button type="button" onClick={() => handleDelete(customer.id)}>Confirmar</button>
+                                                        <button type="button" onClick={() => handleDelete(product.id)}>Confirmar</button>
                                                         <button type="button" onClick={() => setDeleteConfirmation(false)}>Cancelar</button>
                                                     </div>
                                                 </DeleteContent>
                                             </DeleteContainer>
                                         }
-                                    </CustomerOptionsContent>
-                                </CustomerOptions>
-                                <CustomerData isOpen={!selectedShowCustomer.includes(customer.id)} >
+                                    </ProductOptionsContent>
+                                </ProductOptions>
+                                <ProductData isOpen={!selectedShowProduct.includes(product.id)} >
                                     <ul>
-                                        <li><span>Data de nasc: </span>{customer.date_birth}</li>
-                                        <li><span>Telefone: </span>{customer.phone}</li>
-                                        <li><span>Email: </span>{customer.email}</li>
-                                        <li><span>CPF: </span>{customer.cpf}</li>
-                                        <strong>Endereço</strong>
-                                        <li><span>Rua: </span>{customer.address}</li>
-                                        <li><span>Número: </span>{customer.address_number}</li>
-                                        <li><span>Bairro: </span>{customer.neighborhood}</li>
+                                        <li><span>Codígo: </span>{product.code}</li>
+                                        <li><span>Descrição: </span>{product.description}</li>
+                                        <li><span>Preço: </span>R$ {product.price}</li>
+                                        <li><span>Quantidade: </span>{product.quantity}</li>
+                                        <li><span>Custo médio: </span>R$ {product.average_cost}</li>
                                     </ul>
                                     <div>
-                                        <Link to={`/customer/${customer.id}`}>Ver histórico completo<RiArrowRightLine size={24}/></Link>
+                                        <Link to={`/product/${product.id}`}>Ver histórico completo<RiArrowRightLine size={24}/></Link>
                                     </div>
-                                </CustomerData>
-                            </Customer>
+                                </ProductData>
+                            </Product>
                         )) : <span>Nenhum resultado encontrado</span> }
                     </ul>
-                </CustomersContent>
+                </ProductsContent>
                 { totalElements > 0 && <Pagination totalElements={totalElements}  /> }
-            </CustomersContainer>
-            { modalRegistration && <CreateCustomerModal onClose={() => setModalRegistration(false)} /> }
+            </ProductsContainer>
+            { modalRegistration && <CreateProductModal onClose={() => setModalRegistration(false)} /> }
         </Container>
     )
 }
 
-export default Customers;
+export default Products;
