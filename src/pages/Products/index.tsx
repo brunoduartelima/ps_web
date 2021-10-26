@@ -14,6 +14,8 @@ import {
 
 import api from '../../services/api';
 import { usePagination } from '../../hooks/pagination';
+import { useToast } from '../../hooks/toast';
+import { maskMoney } from '../../utils/inputMasks';
 
 import Header from '../../components/Header';
 import Pagination from '../../components/Pagination';
@@ -34,7 +36,6 @@ import {
     ProductData
 } from './styles';
 
-import { useToast } from '../../hooks/toast';
 
 interface ProductsData {
     id: string;
@@ -232,9 +233,9 @@ const Products: React.FC = () => {
                                     <ul>
                                         <li><span>Codígo: </span>{product.code}</li>
                                         <li><span>Descrição: </span>{product.description}</li>
-                                        <li><span>Preço: </span>R$ {product.price}</li>
                                         <li><span>Quantidade: </span>{product.quantity}</li>
-                                        <li><span>Custo médio: </span>R$ {product.average_cost}</li>
+                                        <li><span>Preço: </span>R$ {maskMoney(String(product.price))}</li>
+                                        <li><span>Custo médio: </span>R$ {maskMoney(String(product.average_cost))}</li>
                                     </ul>
                                     <div>
                                         <Link to={`/product/${product.id}`}>Ver histórico completo<RiArrowRightLine size={24}/></Link>

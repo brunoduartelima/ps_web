@@ -1,16 +1,19 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
+import { useParams } from 'react-router-dom';
+import { stringify } from 'querystring';
 import { 
-    RiCloseFill, 
     RiBarcodeLine,
     RiMoneyDollarBoxLine
 } from 'react-icons/ri';
 import { FiPackage} from 'react-icons/fi';
 
-import api from '../../../services/api';
-import { useToast } from '../../../hooks/toast';
+import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
+import { maskMoney } from '../../utils/inputMasks';
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import { 
     Container, 
@@ -20,11 +23,10 @@ import {
     ValueContent
 } from './styles';
 
-import Input from '../../../components/Input';
-import Button from '../../../components/Button';
-import Textarea from '../../../components/Textarea';
-import getValidationErrors from '../../../utils/getValidationErrors';
-import { maskMoney } from '../../../utils/inputMasks';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
+import Textarea from '../../components/Textarea';
+import Header from '../../components/Header';
 
 interface ProductsData {
     name: string;
@@ -35,16 +37,27 @@ interface ProductsData {
     average_cost: number;
 }
 
-interface CreateProductModaProps {
-    onClose(): void;
-}
-
-const CreateProductModal: React.FC<CreateProductModaProps> = ({ onClose }) => {
+const ProductsDetails: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
+    const [product, setProduct] = useState<ProductsData>();
     const [price, setPrice] = useState('');
     const [averageCost, setAverageCost] = useState('');
 
+    const params = useParams();
     const { addToast } = useToast();
+
+    const productId = stringify(params).replace('id=', '');
+
+    useEffect(() => {
+        api.get<ProductsData>(`/products/details/${productId}`).then(
+            response => {
+                const data = response.data;
+                setProduct(data);
+                setPrice(maskMoney(String(data.price)));
+                setAverageCost(maskMoney(String(data.average_cost)));
+            }
+        )
+    }, [productId]);
 
     const handleSubmit = useCallback(async(data: ProductsData) => {
         try {
@@ -52,28 +65,37 @@ const CreateProductModal: React.FC<CreateProductModaProps> = ({ onClose }) => {
 
             data.average_cost = parseFloat(averageCost.replace('.', '').replace(',', '.'));
             data.price = parseFloat(price.replace('.', '').replace(',', '.'));
-            
+
             const schema = Yup.object().shape({
                 name: Yup.string().required('Nome obrigatório'),
                 code: Yup.string().nullable(),
                 description: Yup.string().nullable(),
                 price: Yup.number().required('Valor obrigatório'),
-                average_cost: Yup.number().required('Valor de custo obrigatório'),
-                quantity: Yup.number().required('Quantidade obrigatória').min(0, 'O valor deve ser maior ou igual a zero'),
+                average_cost: Yup.number()
+                .equals(
+                    [product && Number(product.average_cost)], 
+                    'Esse valor não pode ser alterado'
+                ),
+                quantity: Yup.number()                    
+                .equals(
+                    [product && product.quantity], 
+                    'Esse valor não pode ser alterado'
+                ),
             });
 
             await schema.validate(data, {
                 abortEarly: false,
             });
 
-            await api.post('/products', data);
+            const response = await api.put(`/products/${productId}`, data);
+            const updatedProduct = response.data;
 
-            onClose();
+            setProduct(updatedProduct);
 
             addToast({
                 type: 'success',
-                title: 'Cadastro concluído',
-                description: 'O cadastro do produto foi um sucesso.',
+                title: 'Atualização concluída',
+                description: 'A atualização do produto foi um sucesso.',
             });
 
         } catch (error) {
@@ -87,22 +109,28 @@ const CreateProductModal: React.FC<CreateProductModaProps> = ({ onClose }) => {
 
             addToast({
                 type: 'error',
-                title: 'Erro no cadastro',
-                description: 'Ocorreu um erro ao cadastrar produto, tente novamente.',
+                title: 'Erro na atualização',
+                description: 'Ocorreu um erro ao atualizar produto, tente novamente.',
             });
         }
-    }, [addToast, onClose, price, averageCost]);
+    }, [addToast, price, averageCost, product, productId]);
 
     return (
         <Container>
+            <Header />
             <Content>
-                <button type="button" onClick={onClose}><RiCloseFill size={28} title="Fechar" /></button>
                 <Title>
                     <FiPackage size={80}/>
-                    <h1>Cadastrar | Produto</h1>
+                    <h1>Informações atuais | Produto</h1>
                 </Title>
                 <Form 
                     ref={formRef}
+                    initialData={ product && {
+                        name: product.name,
+                        code: product.code,
+                        description: product.description,
+                        quantity: product.quantity
+                    }}
                     onSubmit={handleSubmit}
                 > 
                     <NameContent>
@@ -132,16 +160,17 @@ const CreateProductModal: React.FC<CreateProductModaProps> = ({ onClose }) => {
                                 name="average_cost" 
                                 placeholder="Preço de custo" 
                                 icon={RiMoneyDollarBoxLine}
+                                disabled
                             />
                         </div>
                     </ValueContent>
                     <label htmlFor="quantity">Quantidade</label>
-                    <Input name="quantity" placeholder="Quantidade" type="number" />           
-                    <Button type="submit">Cadastrar</Button>
+                    <Input name="quantity" placeholder="Quantidade" type="number" disabled />      
+                    <Button type="submit">Atualizar</Button>
                 </Form>
             </Content>
         </Container>
     )
 }
 
-export default CreateProductModal;
+export default ProductsDetails;

@@ -1,40 +1,16 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
-    width: 100%;
-    height: 100vh;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
+export const Container = styled.div``;
 export const Content = styled.div`
-    width: 1000px;
-    padding: 0 60px 40px;
-    background-color: var(--body-color);
-    border-radius: 20px;
+    max-width: 1000px;
+    height: 100%;
+    margin: 32px auto;
+    padding: 0 8rem;
 
     label > span {
         color: var(--secondary-text-color);
         font-style: italic;
         margin-left: 0.5rem;
-    }
-
-    button:first-child {
-        background-color: transparent;
-        border: none;
-        outline: none;
-        right: calc(-100% + 40px);
-        position: relative;
-        top: 24px;
-    }
-
-    button:last-child {
-        margin-top: 3rem;
     }
 
     h1 {

@@ -7,7 +7,7 @@ import { FiCalendar, FiPhone, FiUser } from 'react-icons/fi';
 
 import api from '../../../services/api';
 import { useToast } from '../../../hooks/toast';
-import { maskPhone } from '../../../utils/inputMasks';
+import { maskMoney, maskPhone } from '../../../utils/inputMasks';
 import getValidationErrors from '../../../utils/getValidationErrors';
 
 import { 
@@ -38,26 +38,29 @@ interface CreateEmployeeModaProps {
 const CreateEmployeeModal: React.FC<CreateEmployeeModaProps> = ({ onClose }) => {
     const formRef = useRef<FormHandles>(null);
     const [phone, setPhone] = useState('');
+    const [salary, setSalary] = useState('');
 
     const { addToast } = useToast();
 
     const handleSubmit = useCallback(async(data: EmployeeData) => {
         try {
             formRef.current?.setErrors({});
+            
+            data.salary = parseFloat(salary.replace('.', '').replace(',', '.'));
+            data.active = data.active === 'true' ? true : false;
 
             const schema = Yup.object().shape({
                 name: Yup.string().required('Nome obrigatório'),
                 salary: Yup.number().required('Salário obrigatório'),
                 phone: Yup.string().required('Telefone obrigatório').min(14, 'Contato deve possuir no mínimo 10 digitos'),
                 date_birth: Yup.date().required('Data de nascimento obrigatória'),
-                active: Yup.string().required('Seleção obrigatória')
+                active: Yup.boolean().required('Seleção obrigatória')
             });
 
             await schema.validate(data, {
                 abortEarly: false,
             });
 
-            data.active = data.active === 'true' ? true : false;
 
             await api.post('/employees', data);
 
@@ -84,7 +87,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModaProps> = ({ onClose }) => 
                 description: 'Ocorreu um erro ao cadastrar colaborador, tente novamente.',
             });
         }
-    }, [addToast, onClose]);
+    }, [addToast, onClose, salary]);
 
     return (
         <Container>
@@ -134,6 +137,8 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModaProps> = ({ onClose }) => 
                     <DocumentContent>
                         <label htmlFor="salary">Salário</label>
                         <Input  
+                            value={salary} 
+                            onChange={e => setSalary(maskMoney(e.target.value))}
                             name="salary" 
                             placeholder="Salário"
                             icon={RiMoneyDollarBoxLine}

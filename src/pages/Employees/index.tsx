@@ -34,6 +34,7 @@ import {
     DeleteContent,
     EmployeeData
 } from './styles';
+import { maskMoney } from '../../utils/inputMasks';
 
 interface EmployeesData {
     id: string;
@@ -230,7 +231,7 @@ const Employees: React.FC = () => {
                                     <ul>
                                         <li><span>Data de nasc: </span>{employee.date_birth}</li>
                                         <li><span>Telefone: </span>{employee.phone}</li>
-                                        <li><span>Salário: </span>R$ {employee.salary}</li>
+                                        <li><span>Salário: </span>R$ {maskMoney(String(employee.salary))}</li>
                                         <li><span>Estado atual: </span>{employee.active ? 'Ativo' : 'Desligado'}</li>
                                     </ul>
                                     <div>

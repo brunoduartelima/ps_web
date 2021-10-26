@@ -9,7 +9,7 @@ import { FiCalendar, FiPhone, FiUser } from 'react-icons/fi';
 
 import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
-import { maskPhone } from '../../utils/inputMasks';
+import { maskMoney, maskPhone } from '../../utils/inputMasks';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import { 
@@ -40,6 +40,7 @@ const EmployeesDetails: React.FC = () => {
     const [employee, setEmployee] = useState<EmployeeData>();
     const [phone, setPhone] = useState('');
     const [active, setActive] = useState('');
+    const [salary, setSalary] = useState('');
 
     const params = useParams();
     const { addToast } = useToast();
@@ -53,6 +54,7 @@ const EmployeesDetails: React.FC = () => {
                 setEmployee(data);
                 setPhone(data.phone);
                 setActive(data.active === true ? 'true' : 'false');
+                setSalary(maskMoney(String(data.salary)));
             }
         )
     }, [employeeId]);
@@ -61,25 +63,25 @@ const EmployeesDetails: React.FC = () => {
         try {
             formRef.current?.setErrors({});
 
+            data.salary = parseFloat(salary.replace('.', '').replace(',', '.'));
+            data.active = data.active === 'true' ? true : false;
+
             const schema = Yup.object().shape({
                 name: Yup.string().required('Nome obrigatório'),
                 salary: Yup.number().required('Salário obrigatório'),
                 phone: Yup.string().required('Telefone obrigatório').min(14, 'Contato deve possuir no mínimo 10 digitos'),
                 date_birth: Yup.date().required('Data de nascimento obrigatória'),
-                active: Yup.string().required('Seleção obrigatória')
+                active: Yup.boolean().required('Seleção obrigatória')
             });
 
             await schema.validate(data, {
                 abortEarly: false,
             });
 
-            data.active = data.active === 'true' ? true : false;
-
             const response = await api.put(`/employees/${employeeId}`, data);
-            const update = response.data;
+            const updatedEmployee = response.data;
             
-            setEmployee(update);
-            setPhone(update.phone);
+            setEmployee(updatedEmployee);
 
             addToast({
                 type: 'success',
@@ -102,7 +104,7 @@ const EmployeesDetails: React.FC = () => {
                 description: 'Ocorreu um erro ao atualizar colaborador, tente novamente.',
             });
         }
-    }, [addToast, employeeId]);
+    }, [addToast, employeeId, salary]);
 
     const handleSelectActive = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
         const active = event.target.value;
@@ -122,7 +124,6 @@ const EmployeesDetails: React.FC = () => {
                     ref={formRef}
                     initialData={ employee && {
                         name: employee.name,
-                        salary: employee.salary,
                         date_birth: employee.date_birth,
                     }}
                     onSubmit={handleSubmit}
@@ -163,6 +164,8 @@ const EmployeesDetails: React.FC = () => {
                     <DocumentContent>
                         <label htmlFor="salary">Salário</label>
                         <Input  
+                            value={salary}
+                            onChange={e => setSalary(maskMoney(e.target.value))}
                             name="salary" 
                             placeholder="Salário"
                             icon={RiMoneyDollarBoxLine}
