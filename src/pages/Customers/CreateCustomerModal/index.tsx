@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
+import { FiCreditCard, FiMail, FiPhone, FiUser } from 'react-icons/fi';
 import { 
     RiCommunityLine, 
     RiHome4Line, 
@@ -9,15 +10,16 @@ import {
     RiUserAddLine,
     RiCloseFill 
 } from 'react-icons/ri';
-import { FiCalendar, FiCreditCard, FiMail, FiPhone, FiUser } from 'react-icons/fi';
 
 import api from '../../../services/api';
 import { useToast } from '../../../hooks/toast';
 import { maskCpf, maskPhone, maskCep } from '../../../utils/inputMasks';
+import getValidationErrors from '../../../utils/getValidationErrors';
 
 import { 
     Container, 
-    Content, 
+    Content,
+    CloseButton,
     Title,
     NameContent,
     DocumentContent,
@@ -27,8 +29,8 @@ import {
 
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
-import getValidationErrors from '../../../utils/getValidationErrors';
 import Select from '../../../components/Select';
+import Datepicker from '../../../components/Datepicker';
 
 interface CustomerData {
     name: string;
@@ -69,7 +71,7 @@ const CreateCustomerModal: React.FC<CreateCustomerModaProps> = ({ onClose }) => 
                 address_number: Yup.string().required('Número da residência obrigatório'),
                 neighborhood: Yup.string().required('Bairro obrigatório'),
                 cep: Yup.string().required('CEP obrigatório').min(9, 'CEP deve possuir 8 digitos'),
-                date_birth: Yup.date().required('Data de nascimento obrigatória')
+                date_birth: Yup.date().max(new Date(), 'Data inválida').required('Data de nascimento obrigatória')
             });
 
             await schema.validate(data, {
@@ -106,7 +108,7 @@ const CreateCustomerModal: React.FC<CreateCustomerModaProps> = ({ onClose }) => 
     return (
         <Container>
             <Content>
-                <button type="button" onClick={onClose}><RiCloseFill size={28} title="Fechar" /></button>
+                <CloseButton type="button" onClick={onClose}><RiCloseFill size={28} title="Fechar" /></CloseButton>
                 <Title>
                     <RiUserAddLine size={80}/>
                     <h1>Cadastrar | Cliente</h1>
@@ -142,12 +144,9 @@ const CreateCustomerModal: React.FC<CreateCustomerModaProps> = ({ onClose }) => 
                         </div>
                         <div>
                             <label htmlFor="date_birth">Data de nascimento</label>
-                            <Input  
-                                name="date_birth" 
-                                placeholder="Data de nascimento"
-                                icon={FiCalendar}
-                            >
-                            </Input>
+                            <Datepicker
+                                name="date_birth"
+                            />
                         </div>
                     </DocumentContent>
 

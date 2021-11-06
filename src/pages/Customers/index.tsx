@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState, KeyboardEvent } from 'react';
 import { useHistory, Link } from 'react-router-dom';
+import { format, parseISO } from 'date-fns';
 import { 
     RiSearchLine,
     RiBook2Line, 
@@ -44,7 +45,7 @@ interface CustomersData {
     cep: string;
     sex: string;
     phone: string;
-    date_birth: Date;
+    date_birth: string;
     email: string;
 }
 
@@ -228,7 +229,7 @@ const Customers: React.FC = () => {
                                 </CustomerOptions>
                                 <CustomerData isOpen={!selectedShowCustomer.includes(customer.id)} >
                                     <ul>
-                                        <li><span>Data de nasc: </span>{customer.date_birth}</li>
+                                        <li><span>Data de nasc: </span>{format(parseISO(customer.date_birth), 'dd/MM/yyyy')}</li>
                                         <li><span>Telefone: </span>{customer.phone}</li>
                                         <li><span>Email: </span>{customer.email}</li>
                                         <li><span>CPF: </span>{customer.cpf}</li>
