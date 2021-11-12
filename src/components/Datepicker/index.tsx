@@ -13,9 +13,10 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   name: string;
   containerStyle?: React.CSSProperties;
+  onChange?: Omit<ReactDatePickerProps, 'onChange'>;
 }
 
-const Datepicker: React.FC<Props> = ({ name, containerStyle={}, ...rest }) => {
+const Datepicker: React.FC<Props> = ({ name, containerStyle={}, ...rest, onChange }) => {
     const datepickerRef = useRef(null);
 
     const { fieldName, defaultValue, error, registerField } = useField(name);
@@ -116,8 +117,8 @@ const Datepicker: React.FC<Props> = ({ name, containerStyle={}, ...rest }) => {
                 dateFormat="dd/MM/yyyy"
                 withPortal
                 locale={ptBR}
-                {...rest}
                 calendarContainer={ContainerData}
+                {...rest}
             />
 
             {error && 

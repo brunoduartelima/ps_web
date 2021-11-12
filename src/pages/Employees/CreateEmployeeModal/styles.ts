@@ -18,23 +18,19 @@ export const Content = styled.div`
     background-color: var(--body-color);
     border-radius: 20px;
 
-    button:first-child {
-        background-color: transparent;
-        border: none;
-        outline: none;
-        right: calc(-100% + 40px);
-        position: relative;
-        top: 24px;
-    }
-
-    button:last-child {
-        margin-top: 3rem;
-    }
-
     h1 {
         margin-bottom: 12px;
         color: var(--contrast-color);
     }
+`;
+
+export const CloseButton = styled.button`
+    background-color: transparent;
+    border: none;
+    outline: none;
+    right: calc(-100% + 40px);
+    position: relative;
+    top: 24px;
 `;
 
 export const Title = styled.div`
@@ -74,4 +70,5 @@ export const ContactContent = styled.section`
 
 export const DocumentContent = styled.section`
     width: 54rem;
+    margin-bottom: 3rem;
 `;

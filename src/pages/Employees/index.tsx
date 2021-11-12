@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState, KeyboardEvent } from 'react';
 import { useHistory, Link } from 'react-router-dom';
+import { format, parseISO } from 'date-fns';
 import { 
     RiSearchLine,
     RiBook2Line, 
@@ -15,6 +16,7 @@ import {
 import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 import { usePagination } from '../../hooks/pagination';
+import { maskMoney } from '../../utils/inputMasks';
 
 import Header from '../../components/Header';
 import Pagination from '../../components/Pagination';
@@ -34,13 +36,12 @@ import {
     DeleteContent,
     EmployeeData
 } from './styles';
-import { maskMoney } from '../../utils/inputMasks';
 
 interface EmployeesData {
     id: string;
     name: string;
     salary: number;
-    date_birth: Date;
+    date_birth: string;
     phone: string;
     active: boolean;
 }
@@ -229,7 +230,7 @@ const Employees: React.FC = () => {
                                 </EmployeeOptions>
                                 <EmployeeData isOpen={!selectedShowEmployee.includes(employee.id)} >
                                     <ul>
-                                        <li><span>Data de nasc: </span>{employee.date_birth}</li>
+                                        <li><span>Data de nasc: </span>{format(parseISO(employee.date_birth), 'dd/MM/yyyy')}</li>
                                         <li><span>Telefone: </span>{employee.phone}</li>
                                         <li><span>Salário: </span>R$ {maskMoney(String(employee.salary))}</li>
                                         <li><span>Estado atual: </span>{employee.active ? 'Ativo' : 'Desligado'}</li>

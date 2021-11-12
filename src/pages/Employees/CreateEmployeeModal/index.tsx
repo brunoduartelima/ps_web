@@ -3,7 +3,7 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { RiUserAddLine, RiCloseFill, RiMoneyDollarBoxLine } from 'react-icons/ri';
-import { FiCalendar, FiPhone, FiUser } from 'react-icons/fi';
+import { FiPhone, FiUser } from 'react-icons/fi';
 
 import api from '../../../services/api';
 import { useToast } from '../../../hooks/toast';
@@ -13,6 +13,7 @@ import getValidationErrors from '../../../utils/getValidationErrors';
 import { 
     Container, 
     Content, 
+    CloseButton,
     Title,
     NameContent,
     ContactContent,
@@ -22,11 +23,12 @@ import {
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
 import Select from '../../../components/Select';
+import Datepicker from '../../../components/Datepicker';
 
 interface EmployeeData {
     name: string;
     salary: number;
-    date_birth: Date;
+    date_birth: string;
     phone: string;
     active: string | boolean;
 }
@@ -53,7 +55,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModaProps> = ({ onClose }) => 
                 name: Yup.string().required('Nome obrigatório'),
                 salary: Yup.number().required('Salário obrigatório'),
                 phone: Yup.string().required('Telefone obrigatório').min(14, 'Contato deve possuir no mínimo 10 digitos'),
-                date_birth: Yup.date().required('Data de nascimento obrigatória'),
+                date_birth: Yup.date().max(new Date(), 'Data inválida').required('Data de nascimento obrigatória'),
                 active: Yup.boolean().required('Seleção obrigatória')
             });
 
@@ -92,7 +94,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModaProps> = ({ onClose }) => 
     return (
         <Container>
             <Content>
-                <button type="button" onClick={onClose}><RiCloseFill size={28} title="Fechar" /></button>
+                <CloseButton type="button" onClick={onClose}><RiCloseFill size={28} title="Fechar" /></CloseButton>
                 <Title>
                     <RiUserAddLine size={80}/>
                     <h1>Cadastrar | Colaborador</h1>
@@ -111,12 +113,9 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModaProps> = ({ onClose }) => 
                         </div>
                         <div>
                             <label htmlFor="date_birth">Data de nascimento</label>
-                            <Input  
-                                name="date_birth" 
-                                placeholder="Data de nascimento"
-                                icon={FiCalendar}
-                            >
-                            </Input>
+                            <Datepicker
+                                name="date_birth"
+                            />
                         </div>
                     </NameContent>
                     <h1>Contato</h1>

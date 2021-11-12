@@ -4,6 +4,7 @@ import { Form } from '@unform/web';
 import { useParams } from 'react-router-dom';
 import { stringify } from 'querystring';
 import * as Yup from 'yup';
+import { parseISO } from 'date-fns';
 import { RiMoneyDollarBoxLine, RiSurveyLine } from 'react-icons/ri';
 import { FiCalendar, FiPhone, FiUser } from 'react-icons/fi';
 
@@ -25,12 +26,13 @@ import Header from '../../components/Header';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Select from '../../components/Select';
+import Datepicker from '../../components/Datepicker';
 
 
 interface EmployeeData {
     name: string;
     salary: number;
-    date_birth: Date;
+    date_birth: string;
     phone: string;
     active: string | boolean;
 }
@@ -41,6 +43,7 @@ const EmployeesDetails: React.FC = () => {
     const [phone, setPhone] = useState('');
     const [active, setActive] = useState('');
     const [salary, setSalary] = useState('');
+    const [date, setDate] = useState<Date>();
 
     const params = useParams();
     const { addToast } = useToast();
@@ -55,6 +58,7 @@ const EmployeesDetails: React.FC = () => {
                 setPhone(data.phone);
                 setActive(data.active === true ? 'true' : 'false');
                 setSalary(maskMoney(String(data.salary)));
+                setDate(parseISO(data.date_birth));
             }
         )
     }, [employeeId]);
@@ -70,7 +74,7 @@ const EmployeesDetails: React.FC = () => {
                 name: Yup.string().required('Nome obrigatório'),
                 salary: Yup.number().required('Salário obrigatório'),
                 phone: Yup.string().required('Telefone obrigatório').min(14, 'Contato deve possuir no mínimo 10 digitos'),
-                date_birth: Yup.date().required('Data de nascimento obrigatória'),
+                date_birth: Yup.date().max(new Date(), 'Data inválida').required('Data de nascimento obrigatória'),
                 active: Yup.boolean().required('Seleção obrigatória')
             });
 

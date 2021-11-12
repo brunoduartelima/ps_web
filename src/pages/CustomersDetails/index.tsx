@@ -29,7 +29,6 @@ import Button from '../../components/Button';
 import Select from '../../components/Select';
 import Datepicker from '../../components/Datepicker';
 
-
 interface CustomerData {
     name: string;
     cpf: string;
