@@ -50,7 +50,7 @@ const Header: React.FC = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/services">
+                        <Link to="/jobs">
                             <RiHandCoinLine />
                             Serviços
                         </Link>

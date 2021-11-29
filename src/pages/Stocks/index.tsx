@@ -140,10 +140,8 @@ const Stocks: React.FC = () => {
     }, [productsSelected]);
 
     const handleRemoveProductList = useCallback((id: string) => {
-        const filteredProduct = productsSelected.filter(product => product.id !== id);
-
-        setProductsSelected(filteredProduct);
-    }, [productsSelected]);
+        setProductsSelected(oldProducts => oldProducts.filter(product => product.id !== id));
+    }, []);
 
     return (
         <Container>
@@ -224,7 +222,7 @@ const Stocks: React.FC = () => {
                     }
                     <ValueContent>
                         <div>
-                            <label htmlFor="value">Valor Total</label>
+                            <label htmlFor="value">Valor total</label>
                             <Input
                                 value={value}
                                 onChange={e => setValue(maskMoney(e.target.value))} 
