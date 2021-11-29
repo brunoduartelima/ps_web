@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { RiDeleteBin7Line, RiUser3Line, RiUserAddLine } from 'react-icons/ri';
+import { format } from 'date-fns';
 
 import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
@@ -79,9 +80,9 @@ const UsersEmployees: React.FC = () => {
                             <Employee>
                                 <RiUser3Line size={80}/>
                                 <div>
-                                <ButtonDelete type="button" onClick={() => setDeleteConfirmation(true)}>
-                                <RiDeleteBin7Line size={22} title="Excluir" />
-                            </ButtonDelete>
+                                    <ButtonDelete type="button" onClick={() => setDeleteConfirmation(true)}>
+                                        <RiDeleteBin7Line size={22} title="Excluir" />
+                                    </ButtonDelete>
                                     <h2>Colaborador</h2>                  
                                     <strong>{user.employee.name}</strong>
                                     <strong>Estado atual: <span>{user.employee.active ? 'Ativo' : 'Desligado'}</span></strong>
@@ -90,8 +91,8 @@ const UsersEmployees: React.FC = () => {
                             <UserInfo>
                                 <h2>Informações da conta</h2>
                                 <strong>E-mail: <span>{user.email}</span></strong>
-                                <strong>Criado: <span>{user.created_at}</span></strong>
-                                <strong>Última atualização: <span>{user.updated_at}</span></strong>
+                                <strong>Criado: <span>{format(new Date(user.created_at), 'MM/dd/yyyy')}</span></strong>
+                                <strong>Última atualização: <span>{format(new Date(user.updated_at), 'MM/dd/yyyy')}</span></strong>
                             </UserInfo>
                             { deleteConfirmation  && 
                                 <DeleteContainer>

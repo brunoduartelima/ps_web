@@ -25,6 +25,11 @@ interface UserEmployeeData {
     name: string;
 }
 
+interface UserEmployeeFormData {
+    employee_id: string;
+    email: string;
+}
+
 interface CreateUserEmployeeModaProps {
     onClose(): void;
 }
@@ -42,7 +47,7 @@ const CreateUserEmployeeModal: React.FC<CreateUserEmployeeModaProps> = ({ onClos
         });
     }, []);
 
-    const handleSubmit = useCallback(async(data: UserEmployeeData) => {
+    const handleSubmit = useCallback(async(data: UserEmployeeFormData) => {
         try {
             setLoading(true);
             formRef.current?.setErrors({});
@@ -63,6 +68,9 @@ const CreateUserEmployeeModal: React.FC<CreateUserEmployeeModaProps> = ({ onClos
                 title: 'Cadastro concluído',
                 description: 'O cadastro do usuário foi um sucesso.',
             });
+
+            onClose();
+
         } catch (error) {
             if (error instanceof Yup.ValidationError) {
                 const errors = getValidationErrors(error);
@@ -79,7 +87,6 @@ const CreateUserEmployeeModal: React.FC<CreateUserEmployeeModaProps> = ({ onClos
             });
         } finally {
             setLoading(false);
-            onClose();
         }
     }, [addToast, onClose]);
 
@@ -97,7 +104,7 @@ const CreateUserEmployeeModal: React.FC<CreateUserEmployeeModaProps> = ({ onClos
                 >
                     <FormSection>
                         <div>
-                            <label htmlFor="employee">Colaborador</label>
+                            <label htmlFor="employee_id">Colaborador</label>
                             <Select name="employee_id">
                                 <option value="">Selecione um Colaborador</option>
                                 {employees.map(employee => (

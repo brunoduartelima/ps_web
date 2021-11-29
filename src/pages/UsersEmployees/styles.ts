@@ -13,7 +13,6 @@ export const Container = styled.div`
         justify-content: center;
         border: none;
         color: var(--details-color);
-        /* margin-bottom: 40px; */
         font-size: 17px;
         font-weight: 500;
         transition: all  .4s ease-in-out;
@@ -34,12 +33,13 @@ export const UsersContent = styled.div`
     align-items: center;
     justify-content: space-around;
 `;
+
 export const User = styled.div`
     display: flex;
     flex-direction: column;
     background-color: var(--input-color);
     border: 1px solid var(--contrast-color);
-    padding: 4px;
+    padding: 16px 28px;
     margin-bottom: 4px;
     font-size: 20px;
 
@@ -58,7 +58,8 @@ export const ButtonDelete = styled.button`
     margin: 0;
     border: none;
     outline: none;
-    right: calc(-10% + 40px);
+    right: calc(-15% + 24px);
+    top: 8px;
     position: absolute;
 
 
