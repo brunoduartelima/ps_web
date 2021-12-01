@@ -19,6 +19,9 @@ import ProductsDetails from '../pages/ProductsDetails';
 import Stocks from '../pages/Stocks';
 import Jobs from '../pages/Jobs';
 import JobsDetails from '../pages/JobsDetails';
+import Sales from '../pages/Sales';
+import RegisterSale from '../pages/RegisterSale'
+// import SalesDetails from '../pages/SalesDetails';
 
 const Routes: React.FC = () => (
     <Switch>
@@ -40,6 +43,9 @@ const Routes: React.FC = () => (
         <Route path="/stocks" component={Stocks} isPrivate />
         <Route path="/jobs" component={Jobs} isPrivate />
         <Route path="/job/:id" component={JobsDetails} isPrivate />
+        <Route path="/sales" component={Sales} isPrivate />
+        <Route path="/register-sale" component={RegisterSale} isPrivate />
+        {/* <Route path="/sale/:id" component={SalesDetails} isPrivate /> */}
     </Switch>
 );
 

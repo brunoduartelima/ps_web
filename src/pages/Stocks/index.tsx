@@ -158,7 +158,7 @@ const Stocks: React.FC = () => {
                     <OperationContent>
                         <div>
                             <label htmlFor="type">Tipo de operação</label>
-                            <Select name="type" placeholder="Nome">
+                            <Select name="type">
                                 <option value="Entrada">Entrada</option>
                                 <option value="Saída">Saída</option>
                             </Select>
