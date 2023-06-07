@@ -3,7 +3,6 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { useParams } from 'react-router-dom';
-import { stringify } from 'querystring';
 import {
     RiHandCoinLine,
     RiMoneyDollarBoxLine
@@ -40,20 +39,18 @@ const JobsDetails: React.FC = () => {
     const [job, setJob] = useState<JobsData>();
     const [price, setPrice] = useState('');
 
-    const params = useParams();
+    const { id: idJob } = useParams<{id: string}>();
     const { addToast } = useToast();
 
-    const jobId = stringify(params).replace('id=', '');
-
     useEffect(() => {
-        api.get<JobsData>(`/jobs/details/${jobId}`).then(
+        api.get<JobsData>(`/jobs/details/${idJob}`).then(
             response => {
                 const data = response.data;
                 setJob(data);
                 setPrice(maskMoney(String(data.price)));
             }
         )
-    }, [jobId]);
+    }, [idJob]);
 
     const handleSubmit = useCallback(async(data: JobsData) => {
         try {
@@ -72,7 +69,7 @@ const JobsDetails: React.FC = () => {
                 abortEarly: false,
             });
 
-            const response = await api.put(`/jobs/${jobId}`, data);
+            const response = await api.put(`/jobs/${idJob}`, data);
             const updatedJob = response.data;
 
             setJob(updatedJob);
@@ -98,7 +95,7 @@ const JobsDetails: React.FC = () => {
                 description: 'Ocorreu um erro ao atualizar serviço, tente novamente.',
             });
         }
-    }, [addToast, price, jobId]);
+    }, [addToast, price, idJob]);
 
     return (
         <Container>

@@ -1,7 +1,7 @@
-import React, { InputHTMLAttributes, useEffect, useRef, useState, useCallback } from 'react';
+import React, { InputHTMLAttributes, useState, useCallback } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { IconBaseProps } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
-import { useField } from '@unform/core';
 
 import { Container, Error } from './styles';
 
@@ -11,45 +11,35 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     icon?: React.ComponentType<IconBaseProps>;
 }
 
-const Input: React.FC<InputProps> = ({ name, containerStyle={}, icon: Icon, ...rest }) => {
-    const inputRef = useRef<HTMLInputElement>(null);
+const Input: React.FC<InputProps> = ({ name, containerStyle={}, icon: Icon, ...props}) => {
+    const { register, formState: { errors } } = useFormContext();
     
     const [isFocused, setIsFocused] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
-    
-    const { fieldName, defaultValue, error, registerField } = useField(name);
 
     const handleInputFocus = useCallback(() => {
         setIsFocused(true)
     }, []);
 
-    const handleInputBlur = useCallback(() => {
+    const handleInputBlur = useCallback((value: string) => {
         setIsFocused(false);
 
-        setIsFilled(!!inputRef.current?.value);
+        setIsFilled(!!value);
     }, []);
 
-    useEffect(() => {
-        registerField({
-            name: fieldName,
-            ref: inputRef.current,
-            path: 'value',
-        });
-    }, [fieldName, registerField]);
-
     return (
-        <Container style={containerStyle} isErrored={!!error} isFilled={isFilled} isFocused={isFocused} >
+        <Container style={containerStyle} isErrored={!!errors[name]} isFilled={isFilled} isFocused={isFocused} >
             {Icon && <Icon size={20} />}
             <input
+                id={name}
                 onFocus={handleInputFocus}
-                onBlur={handleInputBlur} 
-                defaultValue={defaultValue} 
-                ref={inputRef}
-                {...rest} 
+                onBlurCapture={(e) => handleInputBlur(e.target.value)}
+                {...register(name)}
+                {...props}
             />
 
-            {error && 
-                <Error title={error}>
+            {errors[name] && 
+                <Error title={errors[name]?.message}>
                     <FiAlertCircle color="#c53030" size={20} />
                 </Error>
             }

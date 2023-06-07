@@ -3,7 +3,6 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { useParams } from 'react-router-dom';
-import { stringify } from 'querystring';
 import { 
     RiBarcodeLine,
     RiMoneyDollarBoxLine
@@ -43,13 +42,11 @@ const ProductsDetails: React.FC = () => {
     const [price, setPrice] = useState('');
     const [averageCost, setAverageCost] = useState('');
 
-    const params = useParams();
+    const { id: idProduct } = useParams<{id: string}>();
     const { addToast } = useToast();
 
-    const productId = stringify(params).replace('id=', '');
-
     useEffect(() => {
-        api.get<ProductsData>(`/products/details/${productId}`).then(
+        api.get<ProductsData>(`/products/details/${idProduct}`).then(
             response => {
                 const data = response.data;
                 setProduct(data);
@@ -57,7 +54,7 @@ const ProductsDetails: React.FC = () => {
                 setAverageCost(maskMoney(String(data.average_cost)));
             }
         )
-    }, [productId]);
+    }, [idProduct]);
 
     const handleSubmit = useCallback(async(data: ProductsData) => {
         try {
@@ -87,7 +84,7 @@ const ProductsDetails: React.FC = () => {
                 abortEarly: false,
             });
 
-            const response = await api.put(`/products/${productId}`, data);
+            const response = await api.put(`/products/${idProduct}`, data);
             const updatedProduct = response.data;
 
             setProduct(updatedProduct);
@@ -113,7 +110,7 @@ const ProductsDetails: React.FC = () => {
                 description: 'Ocorreu um erro ao atualizar produto, tente novamente.',
             });
         }
-    }, [addToast, price, averageCost, product, productId]);
+    }, [addToast, price, averageCost, product, idProduct]);
 
     return (
         <Container>

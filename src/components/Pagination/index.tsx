@@ -8,7 +8,11 @@ interface PaginationProps {
     totalElements: number;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ totalElements }) => {
+interface PaginationNavigation {
+    page: number;
+}
+
+const Pagination = ({ totalElements }: PaginationProps) => {
     const [totalPages, setTotalPages] = useState(0);
     const [showPages, setShowPages] = useState<number[]>([]);
 
@@ -65,7 +69,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalElements }) => {
         }
     },[currentPage, updateCurrentPage]);
 
-    const goToPage = useCallback((page) => {
+    const goToPage = useCallback(({ page }: PaginationNavigation) => {
         if(page > totalPages)
             return updateCurrentPage(totalPages);
         
@@ -78,7 +82,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalElements }) => {
 
     return (
         <Container>
-            <GoFirst onClick={() => goToPage(1)}><RiReplyAllLine size={22} /></GoFirst>
+            <GoFirst onClick={() => goToPage({ page: 1 })}><RiReplyAllLine size={22} /></GoFirst>
             <div onClick={() => previousPage()}><RiArrowLeftSLine size={22} /></div>
             <div>
                 {showPages.map(index => {
@@ -86,7 +90,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalElements }) => {
                         <Page 
                             isActual={currentPage === index ? true : false} 
                             key={index} 
-                            onClick={() => goToPage(index)}
+                            onClick={() => goToPage({ page: index})}
                         >
                             { index }
                         </Page>
@@ -94,7 +98,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalElements }) => {
                 })}
             </div>
             <div onClick={() => nextPage()}><RiArrowRightSLine size={22} /></div>
-            <GoLast onClick={() => goToPage(totalPages)}><RiReplyAllLine size={22} /></GoLast>
+            <GoLast onClick={() => goToPage({ page: totalPages })}><RiReplyAllLine size={22} /></GoLast>
         </Container>
     )
 

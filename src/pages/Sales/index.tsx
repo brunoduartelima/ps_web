@@ -35,14 +35,6 @@ import {
 } from './styles';
 import { format } from 'date-fns';
 
-interface JobsData {
-    id: string;
-    name: string;
-    description?: string;
-    price: number;
-    average_time: string;
-}
-
 interface SalesData {
     id: string;
     type: string;

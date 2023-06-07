@@ -32,7 +32,7 @@ export const Container = styled.div<ContainerProps>`
         border-color: var(--contrast-color);
     `}
     ${props => props.isFilled && css`
-        color: var(--contrast-color);
+        border-color: var(--contrast-color);
     `}
     input {
         flex: 1;

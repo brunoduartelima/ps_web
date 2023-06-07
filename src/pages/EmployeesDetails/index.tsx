@@ -2,7 +2,6 @@ import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 're
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { useParams } from 'react-router-dom';
-import { stringify } from 'querystring';
 import * as Yup from 'yup';
 import { parseISO } from 'date-fns';
 import { RiMoneyDollarBoxLine, RiSurveyLine } from 'react-icons/ri';
@@ -45,13 +44,11 @@ const EmployeesDetails: React.FC = () => {
     const [salary, setSalary] = useState('');
     const [date, setDate] = useState<Date>();
 
-    const params = useParams();
+    const { id: idEmployee } = useParams<{id: string}>();
     const { addToast } = useToast();
 
-    const employeeId = stringify(params).replace('id=', '');
-
     useEffect(() => {
-        api.get<EmployeeData>(`/employees/details/${employeeId}`).then(
+        api.get<EmployeeData>(`/employees/details/${idEmployee}`).then(
             response => {
                 const data = response.data;
                 setEmployee(data);
@@ -61,7 +58,7 @@ const EmployeesDetails: React.FC = () => {
                 setDate(parseISO(data.date_birth));
             }
         )
-    }, [employeeId]);
+    }, [idEmployee]);
 
     const handleSubmit = useCallback(async(data: EmployeeData) => {
         try {
@@ -82,7 +79,7 @@ const EmployeesDetails: React.FC = () => {
                 abortEarly: false,
             });
 
-            const response = await api.put(`/employees/${employeeId}`, data);
+            const response = await api.put(`/employees/${idEmployee}`, data);
             const updatedEmployee = response.data;
             
             setEmployee(updatedEmployee);
@@ -108,7 +105,7 @@ const EmployeesDetails: React.FC = () => {
                 description: 'Ocorreu um erro ao atualizar colaborador, tente novamente.',
             });
         }
-    }, [addToast, employeeId, salary]);
+    }, [addToast, idEmployee, salary]);
 
     const handleSelectActive = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
         const active = event.target.value;

@@ -21,7 +21,7 @@ import Jobs from '../pages/Jobs';
 import JobsDetails from '../pages/JobsDetails';
 import Sales from '../pages/Sales';
 import RegisterSale from '../pages/RegisterSale'
-// import SalesDetails from '../pages/SalesDetails';
+import SalesDetails from '../pages/SalesDetails';
 
 const Routes: React.FC = () => (
     <Switch>
@@ -45,7 +45,7 @@ const Routes: React.FC = () => (
         <Route path="/job/:id" component={JobsDetails} isPrivate />
         <Route path="/sales" component={Sales} isPrivate />
         <Route path="/register-sale" component={RegisterSale} isPrivate />
-        {/* <Route path="/sale/:id" component={SalesDetails} isPrivate /> */}
+        <Route path="/sale/:id" component={SalesDetails} isPrivate />
     </Switch>
 );
 

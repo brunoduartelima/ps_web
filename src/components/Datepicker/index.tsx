@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
+import { useFormContext, Controller } from 'react-hook-form';
 import { FiAlertCircle, FiCalendar } from 'react-icons/fi';
-import { useField } from '@unform/core';
 import { getYear, getMonth } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import range from 'lodash/range';
@@ -15,12 +15,8 @@ interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   containerStyle?: React.CSSProperties;
 }
 
-const Datepicker: React.FC<Props> = ({ name, containerStyle={}, ...rest }) => {
-    const datepickerRef = useRef(null);
-
-    const { fieldName, defaultValue, error, registerField } = useField(name);
-
-    const [date, setDate] = useState(defaultValue || null);
+const Datepicker = ({ name, containerStyle={}, ...rest }: Props) => {
+    const { control, formState: { errors }, setValue } = useFormContext();
 
     const years = range(1900, getYear(new Date()) + 2, 1);
     const months = [ 
@@ -48,84 +44,79 @@ const Datepicker: React.FC<Props> = ({ name, containerStyle={}, ...rest }) => {
     const handleInputBlur = useCallback(() => {
         setIsFocused(false);
 
-        setIsFilled(!!datepickerRef.current);
+        setIsFilled(false);
     }, []);
 
-    useEffect(() => {
-        registerField({
-            name: fieldName,
-            ref: datepickerRef.current,
-            path: 'props.selected',
-            clearValue: (ref: any) => {
-                ref.clear();
-            }
-        });
-    }, [fieldName, registerField]);
-
     return (
-        <Container style={containerStyle} isErrored={!!error} isFilled={isFilled} isFocused={isFocused} >
-            <FiCalendar size={20} />
-            <ReactDatePicker
-                renderCustomHeader={({
-                    date,
-                    changeYear,
-                    changeMonth,
-                    decreaseMonth,
-                    increaseMonth,
-                    prevMonthButtonDisabled,
-                    nextMonthButtonDisabled,
-                }) => (
-                    <CalendarHeader>
-                        <CalendarButton type="button" onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
-                            <RiArrowLeftSLine size={40}/>
-                        </CalendarButton>
-                        <select
-                            value={getYear(date)}
-                            onChange={({ target: { value } }) => changeYear(Number(value))}
-                        >
-                            {years.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
+        <Controller
+            control={control}
+            name={name}
+            render={(props) => (
+                <Container style={containerStyle} isErrored={!!errors[name]} isFilled={isFilled} isFocused={isFocused} >
+                    <FiCalendar size={20} />
+                    <ReactDatePicker
+                        renderCustomHeader={({
+                            date,
+                            changeYear,
+                            changeMonth,
+                            decreaseMonth,
+                            increaseMonth,
+                            prevMonthButtonDisabled,
+                            nextMonthButtonDisabled,
+                        }) => (
+                            <CalendarHeader>
+                                <CalendarButton type="button" onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
+                                    <RiArrowLeftSLine size={40}/>
+                                </CalendarButton>
+                                <select
+                                    value={getYear(date)}
+                                    onChange={({ target: { value } }) => changeYear(Number(value))}
+                                >
+                                    {years.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
 
-                        <select
-                            value={months[getMonth(date)]}
-                            onChange={({ target: { value } }) =>
-                            changeMonth(months.indexOf(value))
-                            }
-                        >
-                            {months.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
+                                <select
+                                    value={months[getMonth(date)]}
+                                    onChange={({ target: { value } }) =>
+                                    changeMonth(months.indexOf(value))
+                                    }
+                                >
+                                    {months.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
 
-                        <CalendarButton type="button" onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
-                            <RiArrowRightSLine size={40}/>
-                        </CalendarButton>
-                    </CalendarHeader>
-                )}
-                onFocus={handleInputFocus}
-                onBlur={handleInputBlur} 
-                selected={date}
-                onChange={setDate} 
-                ref={datepickerRef}
-                dateFormat="dd/MM/yyyy"
-                withPortal
-                locale={ptBR}
-                calendarContainer={ContainerData}
-                {...rest}
-            />
+                                <CalendarButton type="button" onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
+                                    <RiArrowRightSLine size={40}/>
+                                </CalendarButton>
+                            </CalendarHeader>
+                        )}
+                        name={name}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur} 
+                        selected={props.field.value}
+                        onChange={(e) => (setValue(name, e))}
+                        dateFormat="dd/MM/yyyy"
+                        withPortal
+                        locale={ptBR}
+                        calendarContainer={ContainerData}
+                        {...rest}
+                    />
 
-            {error && 
-                <Error title={error}>
-                    <FiAlertCircle color="#c53030" size={20} />
-                </Error>
-            }
-        </Container>
+                    {errors[name] && 
+                        <Error title={errors[name]?.message}>
+                            <FiAlertCircle color="#c53030" size={20} />
+                        </Error>
+                    }
+                </Container>
+            )}
+        />
     );
 };
 

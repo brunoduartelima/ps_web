@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -33,7 +33,7 @@ import Textarea from '../../components/Textarea';
 import Header from '../../components/Header';
 import Select from '../../components/Select';
 import Datepicker from '../../components/Datepicker';
-import { useHistory } from 'react-router';
+import { useParams } from 'react-router';
 
 interface IProduct {
     id: string;
@@ -54,7 +54,49 @@ interface IEmployee {
     commission?: number;
 }
 
+interface ISaleProducts {
+    quantity: number;
+    descont: string;
+    price: string;
+    product: {
+        id: string;
+        name: string;
+    }
+}
+
+interface ISaleJobs {
+    quantity: number;
+    descont: string;
+    price: string;
+    job: {
+        id: string;
+        name: string;
+    }
+}
+
+interface ISaleEmployees {
+    commission: string;
+    employee: {
+        id: string;
+        name: string;
+    }
+}
+
 interface SalesData {
+    type: string;
+    description?: string;
+    date: Date;
+    customer: {
+        id: string;
+        name: string;
+        cpf: string;
+    };
+    sale_employees: ISaleEmployees[];
+    sale_products?: ISaleProducts[];
+    sale_jobs?: ISaleJobs[];
+}
+
+interface RequestSalesData {
     type: string;
     description?: string;
     date: Date;
@@ -117,6 +159,9 @@ interface SaleEmployeesData {
 const RegisterSale: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
     const [total, setTotal] = useState('');
+    const [sale, setSale] = useState<SalesData>();
+    const [date, setDate] = useState<Date>();
+    const [type, setType] = useState('');
     const [searchCustomer, setSearchCustomer] = useState('');
     const [searchProduct, setSearchProduct] = useState('');
     const [searchJob, setSearchJob] = useState('');
@@ -130,8 +175,63 @@ const RegisterSale: React.FC = () => {
     const [employees, setEmployees] = useState<EmployeesData[]>([]);
     const [employeesSelected, setEmployeesSelected] = useState<SaleEmployeesData[]>([]);
 
+    const { id: idSale } = useParams<{id: string}>();
     const { addToast } = useToast();
-    const history = useHistory();
+
+    useEffect(() => {
+        api.get<SalesData>(`/sales/details/${idSale}`).then(
+            response => {
+                const data = response.data;
+                setSale(data);
+                setCustomerSelected(data.customer)
+                setDate(new Date(data.date));
+                setType(data.type);
+                
+                let dataProducts = [];
+                let dataJobs = [];
+
+                if(data.sale_products) {
+                    dataProducts = data.sale_products.map(p => {
+                        return {
+                            id: p.product.id,
+                            name: p.product.name,
+                            quantity: p.quantity,
+                            descont: p.descont ? p.descont : '',
+                            price: p.price,
+                            subtotal: formatValue((Number(p.price) * p.quantity) - Number(p.descont))
+                        }
+                    });
+
+                    setProductsSelected(dataProducts)
+                }
+
+                if(data.sale_jobs) {
+                    dataJobs = data.sale_jobs.map(j => {
+                        return {
+                            id: j.job.id,
+                            name: j.job.name,
+                            quantity: j.quantity,
+                            descont: j.descont ? j.descont : '',
+                            price: j.price,
+                            subtotal: formatValue((Number(j.price) * j.quantity) - Number(j.descont))
+                        }
+                    });
+
+                    setJobsSelected(dataJobs)
+                }
+
+                const dataEmployees = data.sale_employees.map(e => {
+                    return {
+                        id: e.employee.id,
+                        name: e.employee.name,
+                        commission: e.commission
+                    }
+                });
+
+                setEmployeesSelected(dataEmployees);
+            }
+        )
+    }, [idSale]);
 
     useEffect(() => {
         try {
@@ -229,7 +329,7 @@ const RegisterSale: React.FC = () => {
         setTotal(formatValue(productsTotal + jobsTotal));
     }, [productsSelected, jobsSelected]);
 
-    const handleSubmit = useCallback(async(data: SalesData) => {
+    const handleSubmit = useCallback(async(data: RequestSalesData) => {
         try {
             formRef.current?.setErrors({});
 
@@ -267,14 +367,15 @@ const RegisterSale: React.FC = () => {
                 abortEarly: false,
             });
 
-            await api.post('/sales', data);
+            const response = await api.put(`/sales/${idSale}`, data);
+            const updatedSale = response.data;
 
-            history.push('/sales');
+            setSale(updatedSale);
 
             addToast({
                 type: 'success',
                 title: 'Operação concluída',
-                description: 'A operação de venda foi um sucesso.',
+                description: 'A operação de venda foi editada com sucesso.',
             });
 
         } catch (error) {
@@ -289,10 +390,10 @@ const RegisterSale: React.FC = () => {
             addToast({
                 type: 'error',
                 title: 'Erro no cadastro',
-                description: 'Ocorreu um erro ao cadastrar operação de venda, tente novamente.',
+                description: 'Ocorreu um erro ao editar operação de venda, tente novamente.',
             });
         }
-    }, [addToast, customerSelected, employeesSelected, productsSelected, jobsSelected, history]);
+    }, [addToast, customerSelected, employeesSelected, productsSelected, jobsSelected, idSale]);
 
     const handleAddCustomerList = useCallback((customer: CustomersData) => {
         setCustomerSelected(customer);
@@ -441,6 +542,12 @@ const RegisterSale: React.FC = () => {
         setEmployeesSelected(updatedEmployees);
     }
 
+    const handleSelectType = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+        const type = event.target.value;
+
+        setType(type);
+    }, []);
+
     return (
         <Container>
             <Header/>
@@ -451,12 +558,20 @@ const RegisterSale: React.FC = () => {
                 </Title>
                 <Form 
                     ref={formRef}
+                    initialData={ sale && {
+                        date: sale.date,
+                        description: sale.description
+                    }}
                     onSubmit={handleSubmit}
                 > 
                     <NameContent>
                         <div>
                             <label htmlFor="type">Tipo de pagamento</label>
-                            <Select name="type">
+                            <Select 
+                                name="type"
+                                value={type}
+                                onChange={handleSelectType}
+                            >
                                 <option value="À vista">À vista</option>
                                 <option value="A prazo">A prazo</option>
                                 <option value="Cartão de crédito">Cartão de crédito</option>
@@ -465,7 +580,7 @@ const RegisterSale: React.FC = () => {
                         </div>
                         <div>
                             <label htmlFor="date">Data da venda</label>
-                            <Datepicker name="date"  />
+                            <Datepicker name="date" selected={date}  />
                         </div>
                     </NameContent>    
                     <label htmlFor="description">Descrição<span>(Campo opcional)</span></label>

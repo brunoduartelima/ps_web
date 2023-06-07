@@ -36,7 +36,11 @@ interface AuthContextData {
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-export const AuthProvider: React.FC = ({ children }) => {
+type AuthProviderProps = {
+    children: React.ReactNode;
+};
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [data, setData] = useState<AuthState>(() => {
         const token = localStorage.getItem('@PsManager:token');
         const user = localStorage.getItem('@PsManager:user');
@@ -51,7 +55,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         return {} as AuthState;
     });
 
-    const signIn = useCallback(async ({ email, password, type_user }) => {
+    const signIn = useCallback(async ({ email, password, type_user }: SignInCredentials) => {
         const response = await api.post('/sessions', {
             email,
             password,

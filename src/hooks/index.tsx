@@ -4,7 +4,11 @@ import { AuthProvider } from './auth';
 import { ToastProvider } from './toast';
 import { PaginationProvider } from './pagination';
 
-const AppProvider: React.FC = ({ children }) => (
+type AppProviderProps = {
+    children: React.ReactNode;
+};
+
+const AppProvider = ({ children }: AppProviderProps) => (
     <AuthProvider>
         <ToastProvider>
             <PaginationProvider>

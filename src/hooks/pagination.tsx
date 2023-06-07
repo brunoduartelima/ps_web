@@ -7,7 +7,11 @@ interface PaginationContextData {
 
 const PaginationContext = createContext<PaginationContextData>({} as PaginationContextData);
 
-export const PaginationProvider: React.FC = ({ children }) => {
+type PaginationProviderProps = {
+    children: React.ReactNode;
+};
+
+export const PaginationProvider = ({ children }: PaginationProviderProps) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const updateCurrentPage = useCallback((page: number) => {
